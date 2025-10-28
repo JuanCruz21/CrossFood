@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # Aplicación Next.js
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: crossfood-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - crossfood-network
+    restart: unless-stopped
+
+  # Backend FastAPI
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: crossfood-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - ENVIRONMENT=production
+    depends_on:
+      - db
+    networks:
+      - crossfood-network
+    restart: unless-stopped
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+networks:
+  crossfood-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
