@@ -1,0 +1,37 @@
+# Ignorar node_modules
+node_modules
+npm-debug.log
+
+# Ignorar archivos de build
+.next
+out
+build
+
+# Ignorar archivos de entorno
+.env
+.env*.local
+
+# Ignorar archivos de sistema
+.DS_Store
+*.pem
+
+# Ignorar archivos de debug
+*.log
+
+# Ignorar archivos de testing
+coverage
+.nyc_output
+
+# Ignorar archivos de IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Ignorar git
+.git
+.gitignore
+
+# Ignorar README
+README.md

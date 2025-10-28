@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+:root {
+  --background: #253439;
+  --gris: #7c898b;
+  --naranja-apagado: #b29e84;
+  --naranja-claro: #f6f4f1;
+  --foreground: #fff;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-naranja-apagado: var(--naranja-apagado);
+  --color-gris: var(--gris);
+  --color-naranja-claro: var(--naranja-claro);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Evita que el header sticky tape las secciones cuando se navega por anclas */
+section {
+  scroll-margin-top: 4rem; /* ajusta según la altura del header */
+}
