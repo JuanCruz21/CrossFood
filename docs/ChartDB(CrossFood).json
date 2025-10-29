@@ -1,0 +1,2587 @@
+{
+  "id": "0",
+  "name": "CrossFood",
+  "createdAt": "2025-10-28T02:57:31.980Z",
+  "updatedAt": "2025-10-29T11:14:59.192Z",
+  "databaseType": "postgresql",
+  "tables": [
+    {
+      "id": "1",
+      "name": "Categories",
+      "schema": "",
+      "order": 10,
+      "fields": [
+        {
+          "id": "2",
+          "name": "id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "3",
+          "name": "restaurant_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "4",
+          "name": "name",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "100"
+        },
+        {
+          "id": "5",
+          "name": "parent_category_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "comments": "Para subcategorias"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "6",
+          "name": "pk_Categories_id",
+          "fieldIds": [
+            "2"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921403
+        }
+      ],
+      "x": 1158.011353014196,
+      "y": 1071.0484420033104,
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1761620921403,
+      "comments": "Categorias para organizar los productos del menu.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "d8ad0ho3rkfx6pd6uhjst0pm5"
+    },
+    {
+      "id": "7",
+      "name": "UserRoles",
+      "schema": "",
+      "order": 5,
+      "fields": [
+        {
+          "id": "8",
+          "name": "user_id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "9",
+          "name": "role_id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": false,
+          "createdAt": 1761620921403
+        }
+      ],
+      "indexes": [
+        {
+          "id": "10",
+          "name": "pk_UserRoles_user_id_role_id_restaurant_id",
+          "fieldIds": [
+            "8",
+            "9"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921403
+        }
+      ],
+      "x": -910.5671362566075,
+      "y": 366.85490922347583,
+      "color": "#42e0c0",
+      "isView": false,
+      "createdAt": 1761620921403,
+      "comments": "Tabla de union para asignar roles a usuarios en restaurantes especificos.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "qno9z3lykngiq25vvuc9fvp16"
+    },
+    {
+      "id": "11",
+      "name": "TaxRates",
+      "schema": "",
+      "order": 9,
+      "fields": [
+        {
+          "id": "12",
+          "name": "id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "13",
+          "name": "name",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "100"
+        },
+        {
+          "id": "14",
+          "name": "rate",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "precision": 5,
+          "scale": 2,
+          "comments": "Porcentaje de impuesto, ej: 21.00"
+        },
+        {
+          "id": "15",
+          "name": "is_default",
+          "type": {
+            "name": "boolean",
+            "id": "boolean",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        }
+      ],
+      "indexes": [
+        {
+          "id": "16",
+          "name": "pk_TaxRates_id",
+          "fieldIds": [
+            "12"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921403
+        }
+      ],
+      "x": 1141.6661068560074,
+      "y": 1369.4935988288835,
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1761620921403,
+      "comments": "Gestiona los diferentes tipos impositivos (IVA) aplicables.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "d8ad0ho3rkfx6pd6uhjst0pm5"
+    },
+    {
+      "id": "17",
+      "name": "Companies",
+      "schema": "",
+      "order": 0,
+      "fields": [
+        {
+          "id": "18",
+          "name": "id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "19",
+          "name": "legal_name",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "255"
+        },
+        {
+          "id": "20",
+          "name": "tax_id",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": true,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "20",
+          "comments": "NIF/CIF de la empresa"
+        },
+        {
+          "id": "21",
+          "name": "fiscal_address",
+          "type": {
+            "name": "text",
+            "id": "text",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "22",
+          "name": "city",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "100"
+        },
+        {
+          "id": "23",
+          "name": "postal_code",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "10"
+        },
+        {
+          "id": "24",
+          "name": "country",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "50"
+        },
+        {
+          "id": "25",
+          "name": "created_at",
+          "type": {
+            "name": "timestamp",
+            "id": "timestamp",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "26",
+          "name": "updated_at",
+          "type": {
+            "name": "timestamp",
+            "id": "timestamp",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        }
+      ],
+      "indexes": [
+        {
+          "id": "27",
+          "name": "pk_Companies_id",
+          "fieldIds": [
+            "18"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921403
+        }
+      ],
+      "x": 246.49032270298562,
+      "y": 426.0078650282212,
+      "color": "#ffe374",
+      "isView": false,
+      "createdAt": 1761620921403,
+      "comments": "Almacena los datos legales de la empresa emisora de las facturas.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "evk9jwejqvx5qoxdhjouuiov0"
+    },
+    {
+      "id": "28",
+      "name": "Invoices",
+      "schema": "",
+      "order": 15,
+      "fields": [
+        {
+          "id": "29",
+          "name": "id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921404
+        },
+        {
+          "id": "30",
+          "name": "company_id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "comments": "Emisor de la factura"
+        },
+        {
+          "id": "31",
+          "name": "payment_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "comments": "Pago que liquida esta factura"
+        },
+        {
+          "id": "32",
+          "name": "invoice_series",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "characterMaximumLength": "20"
+        },
+        {
+          "id": "33",
+          "name": "invoice_number",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404
+        },
+        {
+          "id": "34",
+          "name": "issue_date",
+          "type": {
+            "name": "date",
+            "id": "date",
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "comments": "Fecha de expedicion"
+        },
+        {
+          "id": "35",
+          "name": "operation_date",
+          "type": {
+            "name": "date",
+            "id": "date",
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "comments": "Fecha de la operacion"
+        },
+        {
+          "id": "36",
+          "name": "invoice_type",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "characterMaximumLength": "20",
+          "comments": "simplified, full"
+        },
+        {
+          "id": "37",
+          "name": "customer_name",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "characterMaximumLength": "255"
+        },
+        {
+          "id": "38",
+          "name": "customer_tax_id",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "characterMaximumLength": "20"
+        },
+        {
+          "id": "39",
+          "name": "customer_address",
+          "type": {
+            "name": "text",
+            "id": "text",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404
+        },
+        {
+          "id": "40",
+          "name": "customer_city",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "characterMaximumLength": "100"
+        },
+        {
+          "id": "41",
+          "name": "customer_postal_code",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "characterMaximumLength": "10"
+        },
+        {
+          "id": "42",
+          "name": "customer_country",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "characterMaximumLength": "50"
+        },
+        {
+          "id": "43",
+          "name": "total_base_amount",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "precision": 10,
+          "scale": 2
+        },
+        {
+          "id": "44",
+          "name": "total_tax_amount",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "precision": 10,
+          "scale": 2
+        },
+        {
+          "id": "45",
+          "name": "total_amount",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "precision": 10,
+          "scale": 2,
+          "comments": "Importe total pagado"
+        },
+        {
+          "id": "46",
+          "name": "verifactu_hash",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "characterMaximumLength": "255",
+          "comments": "Hash de la factura anterior para encadenamiento"
+        },
+        {
+          "id": "47",
+          "name": "qr_code_data",
+          "type": {
+            "name": "text",
+            "id": "text",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404
+        },
+        {
+          "id": "48",
+          "name": "created_at",
+          "type": {
+            "name": "timestamp",
+            "id": "timestamp",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404
+        }
+      ],
+      "indexes": [
+        {
+          "id": "49",
+          "name": "pk_Invoices_id",
+          "fieldIds": [
+            "29"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921404
+        },
+        {
+          "id": "50",
+          "name": "idx_Invoices_invoice_series_invoice_number",
+          "fieldIds": [
+            "32",
+            "33"
+          ],
+          "unique": true,
+          "createdAt": 1761620921404
+        }
+      ],
+      "x": -344.0880363700346,
+      "y": 909.6097199893884,
+      "color": "#ff9f74",
+      "isView": false,
+      "createdAt": 1761620921404,
+      "comments": "Almacena los datos de las facturas emitidas, cumpliendo con la normativa espanola.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "r2owsfwbkz97as5q1n5cnhmwm"
+    },
+    {
+      "id": "51",
+      "name": "OrderItems",
+      "schema": "",
+      "order": 13,
+      "fields": [
+        {
+          "id": "52",
+          "name": "id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "53",
+          "name": "order_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "54",
+          "name": "product_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "55",
+          "name": "quantity",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "56",
+          "name": "unit_price",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "precision": 10,
+          "scale": 2,
+          "comments": "Precio del producto en el momento del pedido (snapshot)"
+        },
+        {
+          "id": "57",
+          "name": "notes",
+          "type": {
+            "name": "text",
+            "id": "text",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "comments": "Comentarios del cliente para este producto"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "58",
+          "name": "pk_OrderItems_id",
+          "fieldIds": [
+            "52"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921403
+        }
+      ],
+      "x": 827.4427428612496,
+      "y": 937.4508774574076,
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1761620921403,
+      "comments": "Lineas de detalle de un pedido.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "d8ad0ho3rkfx6pd6uhjst0pm5"
+    },
+    {
+      "id": "59",
+      "name": "RestaurantTables",
+      "schema": "",
+      "order": 2,
+      "fields": [
+        {
+          "id": "60",
+          "name": "id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "61",
+          "name": "restaurant_id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "62",
+          "name": "table_number",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "10"
+        },
+        {
+          "id": "63",
+          "name": "qr_code_identifier",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "255"
+        },
+        {
+          "id": "64",
+          "name": "status",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "50",
+          "comments": "Ej: available, occupied, reserved"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "65",
+          "name": "pk_RestaurantTables_id",
+          "fieldIds": [
+            "60"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921403
+        }
+      ],
+      "x": -89.89321331785193,
+      "y": 153.0504751898207,
+      "color": "#ffe374",
+      "isView": false,
+      "createdAt": 1761620921403,
+      "comments": "Mesas fisicas del restaurante.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "evk9jwejqvx5qoxdhjouuiov0"
+    },
+    {
+      "id": "66",
+      "name": "Products",
+      "schema": "",
+      "order": 11,
+      "fields": [
+        {
+          "id": "67",
+          "name": "id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "68",
+          "name": "category_id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "69",
+          "name": "tax_rate_id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "70",
+          "name": "name",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "255"
+        },
+        {
+          "id": "71",
+          "name": "description",
+          "type": {
+            "name": "text",
+            "id": "text",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "72",
+          "name": "price",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "precision": 10,
+          "scale": 2,
+          "comments": "Precio base sin impuestos"
+        },
+        {
+          "id": "73",
+          "name": "is_available",
+          "type": {
+            "name": "boolean",
+            "id": "boolean",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        }
+      ],
+      "indexes": [
+        {
+          "id": "74",
+          "name": "pk_Products_id",
+          "fieldIds": [
+            "67"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921403
+        }
+      ],
+      "x": 826.6851083454412,
+      "y": 1253.9862748054377,
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1761620921403,
+      "comments": "Articulos individuales del menu.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "d8ad0ho3rkfx6pd6uhjst0pm5"
+    },
+    {
+      "id": "75",
+      "name": "Payments",
+      "schema": "",
+      "order": 14,
+      "fields": [
+        {
+          "id": "76",
+          "name": "id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "77",
+          "name": "order_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "78",
+          "name": "amount",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "precision": 10,
+          "scale": 2
+        },
+        {
+          "id": "79",
+          "name": "payment_method",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "50",
+          "comments": "Ej: cash, card, online"
+        },
+        {
+          "id": "80",
+          "name": "transaction_id",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "255"
+        },
+        {
+          "id": "81",
+          "name": "status",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "50",
+          "comments": "Ej: succeeded, failed, pending"
+        },
+        {
+          "id": "82",
+          "name": "payment_date",
+          "type": {
+            "name": "timestamp",
+            "id": "timestamp",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        }
+      ],
+      "indexes": [
+        {
+          "id": "83",
+          "name": "pk_Payments_id",
+          "fieldIds": [
+            "76"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921404
+        }
+      ],
+      "x": -362.34131244785726,
+      "y": 1467.8423778759056,
+      "color": "#ff9f74",
+      "isView": false,
+      "createdAt": 1761620921404,
+      "comments": "Registra las transacciones de pago.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "r2owsfwbkz97as5q1n5cnhmwm"
+    },
+    {
+      "id": "84",
+      "name": "InvoiceItems",
+      "schema": "",
+      "order": 16,
+      "fields": [
+        {
+          "id": "85",
+          "name": "id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921404
+        },
+        {
+          "id": "86",
+          "name": "invoice_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404
+        },
+        {
+          "id": "87",
+          "name": "product_description",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "characterMaximumLength": "255"
+        },
+        {
+          "id": "88",
+          "name": "quantity",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404
+        },
+        {
+          "id": "89",
+          "name": "unit_price_base",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "precision": 10,
+          "scale": 2,
+          "comments": "Precio unitario sin impuestos (snapshot)"
+        },
+        {
+          "id": "90",
+          "name": "discount_percentage",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "precision": 5,
+          "scale": 2
+        },
+        {
+          "id": "91",
+          "name": "tax_rate_percentage",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "precision": 5,
+          "scale": 2
+        },
+        {
+          "id": "92",
+          "name": "tax_amount",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "precision": 10,
+          "scale": 2,
+          "comments": "Cuota de IVA para esta linea"
+        },
+        {
+          "id": "93",
+          "name": "total_line_amount",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "precision": 10,
+          "scale": 2,
+          "comments": "Importe total de la linea"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "94",
+          "name": "pk_InvoiceItems_id",
+          "fieldIds": [
+            "85"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921404
+        }
+      ],
+      "x": -9.432983658303087,
+      "y": 1055.6774638280906,
+      "color": "#ff9f74",
+      "isView": false,
+      "createdAt": 1761620921404,
+      "comments": "Lineas de detalle de una factura, con datos inmutables (snapshot).",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "r2owsfwbkz97as5q1n5cnhmwm"
+    },
+    {
+      "id": "95",
+      "name": "Restaurants",
+      "schema": "",
+      "order": 1,
+      "fields": [
+        {
+          "id": "96",
+          "name": "id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "97",
+          "name": "company_id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "98",
+          "name": "name",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "255",
+          "comments": "Nombre comercial del restaurante"
+        },
+        {
+          "id": "99",
+          "name": "address",
+          "type": {
+            "name": "text",
+            "id": "text",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "100",
+          "name": "phone_number",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "20"
+        },
+        {
+          "id": "101",
+          "name": "created_at",
+          "type": {
+            "name": "timestamp",
+            "id": "timestamp",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "102",
+          "name": "updated_at",
+          "type": {
+            "name": "timestamp",
+            "id": "timestamp",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        }
+      ],
+      "indexes": [
+        {
+          "id": "103",
+          "name": "pk_Restaurants_id",
+          "fieldIds": [
+            "96"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921403
+        }
+      ],
+      "x": -105.27252357475994,
+      "y": 432.7463338635589,
+      "color": "#ffe374",
+      "isView": false,
+      "createdAt": 1761620921403,
+      "comments": "Representa un establecimiento o sucursal fisico.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "evk9jwejqvx5qoxdhjouuiov0"
+    },
+    {
+      "id": "104",
+      "name": "Roles",
+      "schema": "",
+      "order": 4,
+      "fields": [
+        {
+          "id": "105",
+          "name": "id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "106",
+          "name": "name",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "50"
+        }
+      ],
+      "indexes": [
+        {
+          "id": "107",
+          "name": "pk_Roles_id",
+          "fieldIds": [
+            "105"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921403
+        }
+      ],
+      "x": -1272.2386788662425,
+      "y": 385.5842821266875,
+      "color": "#42e0c0",
+      "isView": false,
+      "createdAt": 1761620921403,
+      "comments": "Define los roles de usuario para el control de permisos.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "qno9z3lykngiq25vvuc9fvp16"
+    },
+    {
+      "id": "108",
+      "name": "Orders",
+      "schema": "",
+      "order": 12,
+      "fields": [
+        {
+          "id": "109",
+          "name": "id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "110",
+          "name": "restaurant_table_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "111",
+          "name": "status",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "50",
+          "comments": "pending, confirmed, in_preparation, served, awaiting_payment, completed, cancelled"
+        },
+        {
+          "id": "112",
+          "name": "created_at",
+          "type": {
+            "name": "timestamp",
+            "id": "timestamp",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "113",
+          "name": "updated_at",
+          "type": {
+            "name": "timestamp",
+            "id": "timestamp",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        }
+      ],
+      "indexes": [
+        {
+          "id": "114",
+          "name": "pk_Orders_id",
+          "fieldIds": [
+            "109"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921403
+        }
+      ],
+      "x": 467.939327178604,
+      "y": 1202.4983784685874,
+      "color": "#8eb7ff",
+      "isView": false,
+      "createdAt": 1761620921403,
+      "comments": "Cabecera de los pedidos de los clientes.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "d8ad0ho3rkfx6pd6uhjst0pm5"
+    },
+    {
+      "id": "115",
+      "name": "InvoiceCorrections",
+      "schema": "",
+      "order": 17,
+      "fields": [
+        {
+          "id": "116",
+          "name": "id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921404
+        },
+        {
+          "id": "117",
+          "name": "original_invoice_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404
+        },
+        {
+          "id": "118",
+          "name": "corrective_invoice_id",
+          "type": {
+            "id": "int",
+            "name": "int"
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": true,
+          "createdAt": 1761620921404
+        },
+        {
+          "id": "119",
+          "name": "correction_reason_code",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "characterMaximumLength": "10"
+        },
+        {
+          "id": "120",
+          "name": "correction_type",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "characterMaximumLength": "20",
+          "comments": "substitution, difference"
+        },
+        {
+          "id": "121",
+          "name": "reason_description",
+          "type": {
+            "name": "text",
+            "id": "text",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404
+        },
+        {
+          "id": "122",
+          "name": "corrected_base_amount",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "precision": 10,
+          "scale": 2
+        },
+        {
+          "id": "123",
+          "name": "corrected_tax_amount",
+          "type": {
+            "name": "decimal",
+            "id": "decimal",
+            "usageLevel": 2,
+            "fieldAttributes": {
+              "precision": {
+                "max": 131072,
+                "min": 0,
+                "default": 10
+              },
+              "scale": {
+                "max": 16383,
+                "min": 0,
+                "default": 2
+              }
+            }
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404,
+          "precision": 10,
+          "scale": 2,
+          "comments": "Cuota de IVA de la factura original"
+        },
+        {
+          "id": "124",
+          "name": "created_at",
+          "type": {
+            "name": "timestamp",
+            "id": "timestamp",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921404
+        }
+      ],
+      "indexes": [
+        {
+          "id": "125",
+          "name": "pk_InvoiceCorrections_id",
+          "fieldIds": [
+            "116"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921404
+        }
+      ],
+      "x": -640.3798990574282,
+      "y": 1007.9861366283169,
+      "color": "#ff9f74",
+      "isView": false,
+      "createdAt": 1761620921404,
+      "comments": "Gestiona la relacion entre facturas originales y sus rectificativas.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "r2owsfwbkz97as5q1n5cnhmwm"
+    },
+    {
+      "id": "126",
+      "name": "Users",
+      "schema": "",
+      "order": 3,
+      "fields": [
+        {
+          "id": "127",
+          "name": "id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "nullable": true,
+          "primaryKey": true,
+          "unique": true,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "128",
+          "name": "name",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "255"
+        },
+        {
+          "id": "129",
+          "name": "email",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": true,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "255"
+        },
+        {
+          "id": "130",
+          "name": "password_hash",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "255"
+        },
+        {
+          "id": "131",
+          "name": "status",
+          "type": {
+            "name": "varchar",
+            "id": "varchar",
+            "fieldAttributes": {
+              "hasCharMaxLength": true
+            },
+            "usageLevel": 1
+          },
+          "nullable": false,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403,
+          "characterMaximumLength": "50",
+          "comments": "Ej: active, inactive"
+        },
+        {
+          "id": "132",
+          "name": "created_at",
+          "type": {
+            "name": "timestamp",
+            "id": "timestamp",
+            "usageLevel": 1
+          },
+          "nullable": true,
+          "primaryKey": false,
+          "unique": false,
+          "createdAt": 1761620921403
+        },
+        {
+          "id": "133",
+          "name": "restauante_id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "unique": false,
+          "nullable": true,
+          "primaryKey": false,
+          "createdAt": 1761735782920
+        }
+      ],
+      "indexes": [
+        {
+          "id": "134",
+          "name": "pk_Users_id",
+          "fieldIds": [
+            "127"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761620921403
+        }
+      ],
+      "x": -600.5705234152304,
+      "y": 324.48284095325295,
+      "color": "#42e0c0",
+      "isView": false,
+      "createdAt": 1761620921403,
+      "comments": "Almacena los datos de los empleados/usuarios del sistema.",
+      "diagramId": "54dywdp0m1u6",
+      "parentAreaId": "qno9z3lykngiq25vvuc9fvp16"
+    },
+    {
+      "id": "135",
+      "name": "Permisos",
+      "x": -941.3563509517082,
+      "y": 656.9859729856256,
+      "fields": [
+        {
+          "id": "136",
+          "name": "id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "unique": true,
+          "nullable": false,
+          "primaryKey": true,
+          "createdAt": 1761735000058
+        },
+        {
+          "id": "137",
+          "name": "nombre",
+          "type": {
+            "id": "varchar",
+            "name": "varchar"
+          },
+          "unique": false,
+          "nullable": true,
+          "primaryKey": false,
+          "createdAt": 1761735214836
+        },
+        {
+          "id": "138",
+          "name": "codigo",
+          "type": {
+            "id": "varchar",
+            "name": "varchar"
+          },
+          "unique": false,
+          "nullable": true,
+          "primaryKey": false,
+          "createdAt": 1761735225718
+        }
+      ],
+      "indexes": [
+        {
+          "id": "139",
+          "name": "pk_table_16_id",
+          "fieldIds": [
+            "136"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761735000058
+        }
+      ],
+      "color": "#42e0c0",
+      "createdAt": 1761735000058,
+      "isView": false,
+      "order": 6,
+      "parentAreaId": "qno9z3lykngiq25vvuc9fvp16"
+    },
+    {
+      "id": "140",
+      "name": "PermisoRoles",
+      "x": -1258.0309455239067,
+      "y": 649.4948718758046,
+      "fields": [
+        {
+          "id": "141",
+          "name": "id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "unique": true,
+          "nullable": false,
+          "primaryKey": true,
+          "createdAt": 1761735159585
+        },
+        {
+          "id": "142",
+          "name": "rol_id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "unique": false,
+          "nullable": true,
+          "primaryKey": false,
+          "createdAt": 1761735274550
+        },
+        {
+          "id": "143",
+          "name": "permiso_id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "unique": false,
+          "nullable": true,
+          "primaryKey": false,
+          "createdAt": 1761735291934
+        }
+      ],
+      "indexes": [
+        {
+          "id": "144",
+          "name": "pk_table_17_id",
+          "fieldIds": [
+            "141"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761735159585
+        }
+      ],
+      "color": "#42e0c0",
+      "createdAt": 1761735159585,
+      "isView": false,
+      "order": 8,
+      "parentAreaId": "qno9z3lykngiq25vvuc9fvp16"
+    },
+    {
+      "id": "145",
+      "name": "PermisoUsuario",
+      "x": -583.8318456400173,
+      "y": 659.5903011058368,
+      "fields": [
+        {
+          "id": "146",
+          "name": "id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "unique": true,
+          "nullable": false,
+          "primaryKey": true,
+          "createdAt": 1761735514494
+        },
+        {
+          "id": "147",
+          "name": "permiso_id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "unique": false,
+          "nullable": true,
+          "primaryKey": false,
+          "createdAt": 1761735586976
+        },
+        {
+          "id": "148",
+          "name": "usuario_id",
+          "type": {
+            "id": "uuid",
+            "name": "uuid"
+          },
+          "unique": false,
+          "nullable": true,
+          "primaryKey": false,
+          "createdAt": 1761735604043
+        }
+      ],
+      "indexes": [
+        {
+          "id": "149",
+          "name": "pk_table_18_id",
+          "fieldIds": [
+            "146"
+          ],
+          "unique": true,
+          "isPrimaryKey": true,
+          "createdAt": 1761735514494
+        }
+      ],
+      "color": "#42e0c0",
+      "createdAt": 1761735514494,
+      "isView": false,
+      "order": 7,
+      "parentAreaId": "qno9z3lykngiq25vvuc9fvp16"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "150",
+      "name": "Categories_id_Categories_parent_category_id",
+      "sourceSchema": "",
+      "targetSchema": "",
+      "sourceTableId": "1",
+      "targetTableId": "1",
+      "sourceFieldId": "2",
+      "targetFieldId": "5",
+      "sourceCardinality": "one",
+      "targetCardinality": "many",
+      "createdAt": 1761620921404,
+      "diagramId": "54dywdp0m1u6"
+    },
+    {
+      "id": "151",
+      "name": "Categories_id_Products_category_id",
+      "sourceSchema": "",
+      "targetSchema": "",
+      "sourceTableId": "1",
+      "targetTableId": "66",
+      "sourceFieldId": "2",
+      "targetFieldId": "68",
+      "sourceCardinality": "one",
+      "targetCardinality": "many",
+      "createdAt": 1761620921404,
+      "diagramId": "54dywdp0m1u6"
+    },
+    {
+      "id": "152",
+      "name": "Companies_id_Invoices_company_id",
+      "sourceSchema": "",
+      "targetSchema": "",
+      "sourceTableId": "17",
+      "targetTableId": "28",
+      "sourceFieldId": "18",
+      "targetFieldId": "30",
+      "sourceCardinality": "one",
+      "targetCardinality": "many",
+      "createdAt": 1761620921404,
+      "diagramId": "54dywdp0m1u6"
+    },
+    {
+      "id": "153",
+      "name": "Companies_id_Restaurants_company_id",
+      "sourceSchema": "",
+      "targetSchema": "",
+      "sourceTableId": "17",
+      "targetTableId": "95",
+      "sourceFieldId": "18",
+      "targetFieldId": "97",
+      "sourceCardinality": "one",
+      "targetCardinality": "many",
+      "createdAt": 1761620921404,
+      "diagramId": "54dywdp0m1u6"
+    },
+    {
+      "id": "154",
+      "name": "Invoices_id_InvoiceCorrections_corrective_invoice_id",
+      "sourceSchema": "",
+      "targetSchema": "",
+      "sourceTableId": "28",
+      "targetTableId": "115",
+      "sourceFieldId": "29",
+      "targetFieldId": "118",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1761620921404,
+      "diagramId": "54dywdp0m1u6"
+    },
+    {
+      "id": "155",
+      "name": "Invoices_id_InvoiceCorrections_original_invoice_id",
+      "sourceSchema": "",
+      "targetSchema": "",
+      "sourceTableId": "28",
+      "targetTableId": "115",
+      "sourceFieldId": "29",
+      "targetFieldId": "117",
+      "sourceCardinality": "one",
+      "targetCardinality": "many",
+      "createdAt": 1761620921404,
+      "diagramId": "54dywdp0m1u6"
+    },
+    {
+      "id": "156",
+      "name": "Invoices_id_InvoiceItems_invoice_id",
+      "sourceSchema": "",
+      "targetSchema": "",
+      "sourceTableId": "28",
+      "targetTableId": "84",
+      "sourceFieldId": "29",
+      "targetFieldId": "86",
+      "sourceCardinality": "one",
+      "targetCardinality": "many",
+      "createdAt": 1761620921404,
+      "diagramId": "54dywdp0m1u6"
+    },
+    {
+      "id": "157",
+      "name": "Orders_id_OrderItems_order_id",
+      "sourceSchema": "",
+      "targetSchema": "",
+      "sourceTableId": "108",
+      "targetTableId": "51",
+      "sourceFieldId": "109",
+      "targetFieldId": "53",
+      "sourceCardinality": "one",
+      "targetCardinality": "many",
+      "createdAt": 1761620921404,
+      "diagramId": "54dywdp0m1u6"
+    },
+    {
+      "id": "158",
+      "name": "Orders_id_Payments_order_id",
+      "sourceSchema": "",
+      "targetSchema": "",
+      "sourceTableId": "108",
+      "targetTableId": "75",
+      "sourceFieldId": "109",
+      "targetFieldId": "77",
+      "sourceCardinality": "one",
+      "targetCardinality": "many",
+      "createdAt": 1761620921404,
+      "diagramId": "54dywdp0m1u6"
+    },
+    {
+      "id": "159",
+      "name": "Payments_id_Invoices_payment_id",
+      "sourceSchema": "",
+      "targetSchema": "",
+      "sourceTableId": "75",
+      "targetTableId": "28",
+      "sourceFieldId": "76",
+      "targetFieldId": "31",
+      "sourceCardinality": "one",
+      "targetCardinality": "many",
+      "createdAt": 1761620921404,
+      "diagramId": "54dywdp0m1u6"
+    },
+    {
+      "id": "160",
+      "name": "Products_id_OrderItems_product_id",
+      "sourceSchema": "",
+      "targetSchema": "",
+      "sourceTableId": "66",
+      "targetTableId": "51",
+      "sourceFieldId": "67",
+      "targetFieldId": "54",
+      "sourceCardinality": "one",
+      "targetCardinality": "many",
+      "createdAt": 1761620921404,
+      "diagramId": "54dywdp0m1u6"
+    },
+    {
+      "id": "161",
+      "name": "Users_id_UserRoles_user_id",
+      "sourceSchema": "",
+      "targetSchema": "",
+      "sourceTableId": "126",
+      "targetTableId": "7",
+      "sourceFieldId": "127",
+      "targetFieldId": "8",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1761620921404,
+      "diagramId": "54dywdp0m1u6"
+    },
+    {
+      "id": "162",
+      "name": "UserRoles_role_id_fk",
+      "sourceSchema": "",
+      "sourceTableId": "7",
+      "targetSchema": "",
+      "targetTableId": "104",
+      "sourceFieldId": "9",
+      "targetFieldId": "105",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1761734986676
+    },
+    {
+      "id": "163",
+      "name": "Roles_id_fk",
+      "sourceSchema": "",
+      "sourceTableId": "104",
+      "targetTableId": "140",
+      "sourceFieldId": "105",
+      "targetFieldId": "142",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1761735347581
+    },
+    {
+      "id": "164",
+      "name": "PermisoRoles_permiso_id_fk",
+      "sourceTableId": "140",
+      "targetTableId": "135",
+      "sourceFieldId": "143",
+      "targetFieldId": "136",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1761735504427
+    },
+    {
+      "id": "165",
+      "name": "PermisoUsuario_permiso_id_fk",
+      "sourceTableId": "145",
+      "targetTableId": "135",
+      "sourceFieldId": "147",
+      "targetFieldId": "136",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1761735655607
+    },
+    {
+      "id": "166",
+      "name": "PermisoUsuario_usuario_id_fk",
+      "sourceTableId": "145",
+      "targetSchema": "",
+      "targetTableId": "126",
+      "sourceFieldId": "148",
+      "targetFieldId": "127",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1761735677523
+    },
+    {
+      "id": "167",
+      "name": "Users_restauante_id_fk",
+      "sourceSchema": "",
+      "sourceTableId": "126",
+      "targetSchema": "",
+      "targetTableId": "95",
+      "sourceFieldId": "133",
+      "targetFieldId": "96",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1761735813808
+    },
+    {
+      "id": "168",
+      "name": "TaxRates_id_fk",
+      "sourceSchema": "",
+      "sourceTableId": "11",
+      "targetSchema": "",
+      "targetTableId": "66",
+      "sourceFieldId": "12",
+      "targetFieldId": "69",
+      "sourceCardinality": "one",
+      "targetCardinality": "many",
+      "createdAt": 1761735997974
+    },
+    {
+      "id": "169",
+      "name": "RestaurantTables_id_fk",
+      "sourceSchema": "",
+      "sourceTableId": "59",
+      "targetSchema": "",
+      "targetTableId": "95",
+      "sourceFieldId": "60",
+      "targetFieldId": "96",
+      "sourceCardinality": "one",
+      "targetCardinality": "one",
+      "createdAt": 1761736091456
+    }
+  ],
+  "dependencies": [],
+  "areas": [
+    {
+      "id": "170",
+      "name": "Sistema de autenticación",
+      "x": -1339.49667009321,
+      "y": 286.90802089224235,
+      "width": 1080,
+      "height": 570,
+      "color": "#b067e9"
+    },
+    {
+      "id": "171",
+      "name": "Restaurante",
+      "x": -138.05280537824743,
+      "y": 108.672486283181,
+      "width": 749,
+      "height": 685,
+      "color": "#7175fa"
+    },
+    {
+      "id": "172",
+      "name": "Facturación",
+      "x": -667.3246835313299,
+      "y": 875.1189685967595,
+      "width": 961,
+      "height": 873,
+      "color": "#9ef07a"
+    },
+    {
+      "id": "173",
+      "name": "Productos",
+      "x": 411.86862349209747,
+      "y": 910.4117474108275,
+      "width": 1067,
+      "height": 703,
+      "color": "#b067e9"
+    }
+  ],
+  "customTypes": []
+}
