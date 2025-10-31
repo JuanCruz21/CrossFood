@@ -1,10 +1,4 @@
-import Header from "./page/header";
-import Hero from "./page/hero";
-import { Footer } from "./page/footer";
-import { Features } from "./page/features";
-import { HowItWorks } from "./page/how-it-works";
 import { Metadata } from "next";
-import { Benefits } from "./page/benefits";
 
 export const metadata: Metadata = {
   title: "crossFood - Sistema de Pedidos con QR para Restaurantes",
@@ -13,13 +7,8 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div>
-      <Header />
-      <Hero />
-      <Features />
-      <Benefits />
-      <HowItWorks />
-      <Footer />
-    </div>
+    <>
+      
+    </>
   );
 }

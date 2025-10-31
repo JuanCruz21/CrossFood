@@ -1,11 +1,32 @@
 @import "tailwindcss";
 
 :root {
-  --background: #253439;
+  /* Light Mode Colors */
+  --background: #F9F9F9;          /* Blanco Suave */
+  --foreground: #1E1E1E;          /* Casi Negro */
+  --primary: #0D47A1;             /* Azul Zafiro */
+  --primary-foreground: #FFFFFF;
+  --accent: #F57C00;              /* Naranja Intenso */
+  --accent-foreground: #FFFFFF;
+  --success: #388E3C;             /* Verde Bosque */
+  --success-foreground: #FFFFFF;
+  --error: #D32F2F;               /* Rojo Alerta */
+  --error-foreground: #FFFFFF;
+  --warning: #FFA000;             /* Ámbar */
+  --warning-foreground: #000000;
+  --neutral: #E0E0E0;             /* Gris Claro */
+  --muted: #F5F5F5;
+  --muted-foreground: #6B6B6B;
+  --border: #E0E0E0;
+  --card: #FFFFFF;
+  --card-foreground: #1E1E1E;
+  --input: #FFFFFF;
+  --ring: #0D47A1;
+  
+  /* Legacy colors for backward compatibility */
   --gris: #7c898b;
   --naranja-apagado: #b29e84;
   --naranja-claro: #f6f4f1;
-  --foreground: #fff;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-naranja-apagado: var(--naranja-apagado);
@@ -13,6 +34,30 @@
   --color-naranja-claro: var(--naranja-claro);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+[data-theme="dark"] {
+  /* Dark Mode Colors */
+  --background: #1A1D21;          /* Carbón */
+  --foreground: #EAEAEA;          /* Blanco Humo */
+  --primary: #42A5F5;             /* Azul Cielo */
+  --primary-foreground: #000000;
+  --accent: #FFA726;              /* Naranja Mango */
+  --accent-foreground: #000000;
+  --success: #66BB6A;             /* Verde Menta */
+  --success-foreground: #000000;
+  --error: #EF5350;               /* Rojo Salmón */
+  --error-foreground: #000000;
+  --warning: #FFEE58;             /* Amarillo Limón */
+  --warning-foreground: #000000;
+  --neutral: #424242;             /* Gris Oscuro */
+  --muted: #2A2D32;
+  --muted-foreground: #A0A0A0;
+  --border: #424242;
+  --card: #242830;
+  --card-foreground: #EAEAEA;
+  --input: #242830;
+  --ring: #42A5F5;
 }
 
 body {
