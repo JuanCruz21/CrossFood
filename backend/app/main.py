@@ -32,6 +32,7 @@ if settings.ENVIRONMENT in ["local", "staging"]:
         "http://botogo-backend-isp9bj-36a1b9-5-180-149-124.traefik.me",
         "https://botogo-backend-isp9bj-36a1b9-5-180-149-124.traefik.me",
         "http://localhost:3001",
+        "http://localhost:3000",
     ])
 
 if origins:

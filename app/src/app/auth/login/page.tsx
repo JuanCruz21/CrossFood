@@ -5,20 +5,34 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from 'app/ui/buttons';
 import { ThemeToggle, useTheme } from '../../hooks/useTheme';
+import { api } from 'app/lib/api'
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function LoginPage() {
   const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Aquí irá la lógica de autenticación
-    setTimeout(() => setIsLoading(false), 1500);
+    api.post('/login/access-token', formData)
+      .then(response => {
+        console.log('Login successful:', response.data);
+        toast.success('Inicio de sesión exitoso');
+        // Aquí puedes redirigir al usuario o guardar el token, etc.
+      })
+      .catch(error => {
+        console.error('Login error:', error);
+        toast.error('Error al iniciar sesión');
+        // Manejo de errores, mostrar mensaje al usuario, etc.
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,18 +89,18 @@ export default function LoginPage() {
               {/* Email */}
               <div>
                 <label 
-                  htmlFor="email" 
+                  htmlFor="username" 
                   className="block text-sm font-medium text-[var(--foreground)] mb-2"
                 >
                   Correo electrónico
                 </label>
                 <input
-                  id="email"
-                  name="email"
+                  id="username"
+                  name="username"
                   type="email"
                   autoComplete="email"
                   required
-                  value={formData.email}
+                  value={formData.username}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-colors"
                   placeholder="tu@email.com"
@@ -199,6 +213,8 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
+      {/* Toast container - react-toastify */}
+      <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
     </div>
   );
 }

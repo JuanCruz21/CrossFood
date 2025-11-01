@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Sidebar } from 'app/ui/Sidebar';
+import { Sidebar } from 'app/ui/sideBar';
 
 interface HomeLayoutProps {
   children: React.ReactNode;

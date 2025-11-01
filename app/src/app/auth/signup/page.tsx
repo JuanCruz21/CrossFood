@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from 'app/ui/buttons';
-import { ThemeToggle, useTheme } from '../../hooks/useTheme';
+import { ThemeToggle, useTheme } from 'app/app/hooks/useTheme';
+import { api } from 'app/lib/api'
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function SignupPage() {
   const { theme } = useTheme();
@@ -16,23 +18,39 @@ export default function SignupPage() {
     confirmPassword: '',
     acceptTerms: false,
   });
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setIsLoading(true);
+
     if (formData.password !== formData.confirmPassword) {
-      alert('Las contraseñas no coinciden');
+      toast.warning('Las contraseñas no coinciden');
+      setIsLoading(false);
       return;
     }
 
     if (!formData.acceptTerms) {
-      alert('Debes aceptar los términos y condiciones');
+      toast.warning('Debes aceptar los términos y condiciones');
+      setIsLoading(false);
       return;
     }
-
-    setIsLoading(true);
-    // Aquí irá la lógica de registro
-    setTimeout(() => setIsLoading(false), 1500);
+    api.post('/users/signup', {
+      full_name : formData.name,
+      email: formData.email,
+      password: formData.password,
+    })
+      .then(response => {
+        console.log('Signup successful:', response.data);
+        toast.success('Cuenta creada exitosamente. Por favor, inicia sesión.');
+        // Aquí puedes redirigir al usuario o guardar el token, etc.
+      })
+      .catch(error => {
+        console.error('Signup error:', error);
+        toast.error('Error al crear la cuenta. Por favor, intenta nuevamente.');
+        // Manejo de errores, mostrar mensaje al usuario, etc.
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -262,6 +280,8 @@ export default function SignupPage() {
           </p>
         </div>
       </div>
+      {/* Toast container - react-toastify */}
+      <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
     </div>
   );
 }
