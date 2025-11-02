@@ -1,14 +1,49 @@
-'use client';
+"use client";
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { apiRequest } from 'app/lib/api';
 
 export default function HomePage() {
   const router = useRouter();
 
+  // Helper: leer cookie por nombre
+  const getCookie = (name: string): string | null => {
+    if (typeof document === 'undefined') return null;
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+  };
+
   useEffect(() => {
-    // Redirigir automáticamente al dashboard
-    router.push('/home/dashboard');
+    const validateAndRedirect = async () => {
+      // Priorizar cookie (la que guardamos en el login)
+      const token = getCookie('access_token');
+
+      if (!token) {
+        // No hay token -> forzar login
+        router.replace('/auth/login');
+        return;
+      }
+
+      try {
+        // Validar token llamando al endpoint protegido /users/me
+        await apiRequest('/users/me', {
+          method: 'GET',
+          useAuth: false,
+          // Enviamos el token manualmente en la cabecera Authorization
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        // Token válido -> redirigir al dashboard
+        router.replace('/home/dashboard');
+      } catch (err) {
+        // Token inválido o error -> limpiar cookie y enviar al login
+        document.cookie = 'access_token=; path=/; max-age=0;';
+        router.replace('/auth/login');
+      }
+    };
+
+    validateAndRedirect();
   }, [router]);
 
   return (

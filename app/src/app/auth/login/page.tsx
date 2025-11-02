@@ -8,9 +8,11 @@ import { Button } from 'app/ui/buttons';
 import { ThemeToggle, useTheme } from '../../hooks/useTheme';
 import { api, apiRequest } from 'app/lib/api'
 import { ToastContainer, toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const { theme } = useTheme();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
@@ -39,7 +41,9 @@ export default function LoginPage() {
           const maxAge = 7 * 24 * 60 * 60; // 7 días
           document.cookie = `access_token=${token}; path=/; max-age=${maxAge}; Secure; SameSite=Lax`;
         }
+        router.push('/home/dashboard');
         toast.success('Inicio de sesión exitoso');
+        
       })
       .catch((error: any) => {
         console.error('Login error:', error);

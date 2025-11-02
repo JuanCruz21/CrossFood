@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ThemeToggle, useTheme } from '../app/hooks/useTheme';
+import { toast } from 'react-toastify';
+import { clearAuthToken } from 'app/lib/api';
 import { MenuItem, sidebarConfig } from './sidebarConfig';
 
 interface SidebarProps {
@@ -75,9 +77,25 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleLogout = () => {
-    // Aquí irá la lógica de logout
-    console.log('Logging out...');
-    router.push('/');
+    // Limpiar cookie que guardamos en el login
+    try {
+      // Borrar cookie access_token
+      document.cookie = 'access_token=; path=/; max-age=0;';
+    } catch (e) {
+      // nada
+    }
+
+    // Limpiar token almacenado en local/session storage (si aplica)
+    try {
+      clearAuthToken();
+    } catch (e) {
+      // noop
+    }
+
+    // Mostrar mensaje y redirigir al login
+    toast.success('Sesión cerrada');
+    onClose();
+    router.replace('/auth/login');
   };
 
   const handleSearch = (e: React.FormEvent) => {
