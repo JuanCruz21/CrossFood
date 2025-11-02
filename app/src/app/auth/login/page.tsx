@@ -3,9 +3,10 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import 'react-toastify/dist/ReactToastify.css';
 import { Button } from 'app/ui/buttons';
 import { ThemeToggle, useTheme } from '../../hooks/useTheme';
-import { api } from 'app/lib/api'
+import { api, apiRequest } from 'app/lib/api'
 import { ToastContainer, toast } from 'react-toastify';
 
 export default function LoginPage() {
@@ -19,16 +20,33 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    api.post('/login/access-token', formData)
+  // FastAPI OAuth2 token endpoint expects application/x-www-form-urlencoded with username & password
+  const formBody = new URLSearchParams({ username: formData.username, password: formData.password }).toString();
+  // Log payload for debugging (verifica en Network que el body y content-type sean correctos)
+  console.debug('Login payload (form-urlencoded):', formBody);
+    apiRequest('/login/access-token', {
+      method: 'POST',
+      body: formBody,
+      useAuth: false,
+      contentType: 'application/x-www-form-urlencoded',
+    })
       .then(response => {
         console.log('Login successful:', response.data);
+        // Extraemos el token de la respuesta (compatible con FastAPI)
+        const token = response?.data?.access_token || response?.data?.token || response?.data?.accessToken || response?.data?.token?.access_token;
+        if (token) {
+          // Guardar cookie en el navegador (no HttpOnly). Ajusta max-age y flags según necesidad.
+          const maxAge = 7 * 24 * 60 * 60; // 7 días
+          document.cookie = `access_token=${token}; path=/; max-age=${maxAge}; Secure; SameSite=Lax`;
+        }
         toast.success('Inicio de sesión exitoso');
-        // Aquí puedes redirigir al usuario o guardar el token, etc.
       })
-      .catch(error => {
+      .catch((error: any) => {
         console.error('Login error:', error);
-        toast.error('Error al iniciar sesión');
-        // Manejo de errores, mostrar mensaje al usuario, etc.
+        // Mostrar detalle si la API lo devuelve (por ejemplo: validation errors)
+        const detail = error?.data?.detail || error?.data?.message || error?.message || 'Error al iniciar sesión';
+        toast.error(String(detail));
+        // Manejo de errores adicional si es necesario
       })
       .finally(() => {
         setIsLoading(false);
