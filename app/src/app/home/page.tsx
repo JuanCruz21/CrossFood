@@ -3,16 +3,11 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiRequest } from 'app/lib/api';
+import { getCookie } from 'app/lib/helper';
+import { toast } from 'react-toastify';
 
 export default function HomePage() {
   const router = useRouter();
-
-  // Helper: leer cookie por nombre
-  const getCookie = (name: string): string | null => {
-    if (typeof document === 'undefined') return null;
-    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-    return match ? decodeURIComponent(match[2]) : null;
-  };
 
   useEffect(() => {
     const validateAndRedirect = async () => {
@@ -21,7 +16,8 @@ export default function HomePage() {
 
       if (!token) {
         // No hay token -> forzar login
-        router.replace('/auth/login');
+        toast.error("El token no es valido")
+        // router.replace('/auth/login');
         return;
       }
 
@@ -39,7 +35,8 @@ export default function HomePage() {
       } catch (err) {
         // Token inválido o error -> limpiar cookie y enviar al login
         document.cookie = 'access_token=; path=/; max-age=0;';
-        router.replace('/auth/login');
+        // router.replace('/auth/login');
+        toast.error("El token no es valido")
       }
     };
 
