@@ -10,6 +10,24 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Navegación y rutas
+  go_router: ^14.0.0
+
+  # Peticiones HTTP al backend
+  http: ^1.2.2
+
+  # Manejo de estado (para carrito, usuario, etc.)
+  provider: ^6.1.2
+
+  # Almacenamiento local (guardar token del usuario)
+  shared_preferences: ^2.3.2
+
+  # Íconos e imágenes SVG (para diseño)
+  flutter_svg: ^2.0.10
+
+  # Animaciones opcionales y feedback visual
+  animations: ^2.0.11
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,22 +1,5 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const MainApp());
-}
-
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false, // quita la franja de debug
-      title: 'CrossFood',
-      theme: ThemeData(primarySwatch: Colors.deepOrange),
-      home: const SplashScreen(), // 👈 arranca con la splash
-    );
-  }
-}
+import 'package:go_router/go_router.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -29,12 +12,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Espera 2 segundos y redirige al Home
+
+    // Espera 2 segundos y luego redirige al Home
     Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+      context.go('/home');
     });
   }
 
@@ -58,23 +39,6 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Inicio - CrossFood'),
-        centerTitle: true,
-      ),
-      body: const Center(
-        child: Text('¡Bienvenido a CrossFood!', style: TextStyle(fontSize: 22)),
       ),
     );
   }
