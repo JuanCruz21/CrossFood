@@ -5,22 +5,10 @@ from sqlalchemy import pool
 from alembic import context
 from dotenv import load_dotenv
 import os
+
 # Importamos todos los modelos para que Alembic los detecte
-import models.users
-import models.companies
-import models.restaurants
-import models.roles
-import models.user_roles
-import models.tax_rates
-import models.categories
-import models.products
-import models.restaurant_tables
-import models.orders
-import models.order_items
-import models.payments
-import models.invoices
-import models.invoice_items
-import models.invoice_corrections
+import models
+
 # Cargamos las variables de entorno
 load_dotenv()
 

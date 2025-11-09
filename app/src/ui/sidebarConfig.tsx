@@ -1,3 +1,4 @@
+import { LockIcon, UsersRoundIcon } from "lucide-react";
 // Configuración del Sidebar - Fácil de editar
 export interface MenuItem {
   id: string;
@@ -170,6 +171,22 @@ export const sidebarConfig: MenuItem[] = [
           </svg>
         ),
         href: '/home/settings/users',
+      },
+      {
+        id: 'settings-roles',
+        label: 'Roles',
+        icon: (
+          <UsersRoundIcon className="w-4 h-4" />
+        ),
+        href: '/home/settings/rols',
+      },
+      {
+        id: 'settings-permissions',
+        label: 'Permisos',
+        icon: (
+          <LockIcon className="w-4 h-4" />
+        ),
+        href: '/home/settings/permiso',
       },
     ],
   },

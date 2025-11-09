@@ -6,7 +6,7 @@ import Link from 'next/link';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button } from 'app/ui/buttons';
 import { ThemeToggle, useTheme } from '../../hooks/useTheme';
-import { api, apiRequest } from 'app/lib/api'
+import { api, apiRequest, setAuthToken } from 'app/lib/api'
 import { ToastContainer, toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
@@ -22,10 +22,24 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-  // FastAPI OAuth2 token endpoint expects application/x-www-form-urlencoded with username & password
-  const formBody = new URLSearchParams({ username: formData.username, password: formData.password }).toString();
-  // Log payload for debugging (verifica en Network que el body y content-type sean correctos)
-  console.debug('Login payload (form-urlencoded):', formBody);
+    
+    // Validación básica
+    if (!formData.username || !formData.password) {
+      toast.error('Por favor ingresa email y contraseña');
+      setIsLoading(false);
+      return;
+    }
+    
+    // FastAPI OAuth2 token endpoint expects application/x-www-form-urlencoded with username & password
+    const formBody = new URLSearchParams({ 
+      username: formData.username.trim(), 
+      password: formData.password 
+    }).toString();
+    
+    // Log payload for debugging (verifica en Network que el body y content-type sean correctos)
+    console.log('Login attempt with email:', formData.username);
+    console.debug('Login payload (form-urlencoded):', formBody);
+    
     apiRequest('/login/access-token', {
       method: 'POST',
       body: formBody,
@@ -37,9 +51,8 @@ export default function LoginPage() {
         // Extraemos el token de la respuesta (compatible con FastAPI)
         const token = response?.data?.access_token || response?.data?.token || response?.data?.accessToken || response?.data?.token?.access_token;
         if (token) {
-          // Guardar cookie en el navegador (no HttpOnly). Ajusta max-age y flags según necesidad.
-          const maxAge = 7 * 24 * 60 * 60; // 7 días
-          document.cookie = `access_token=${token}; path=/; max-age=${maxAge}; Secure; SameSite=Lax`;
+          // Guardar el token usando la función de api.ts (localStorage)
+          setAuthToken(token, true); // true = remember me (usa localStorage)
         }
         router.push('/home/dashboard');
         toast.success('Inicio de sesión exitoso');

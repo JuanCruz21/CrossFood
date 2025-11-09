@@ -1,19 +1,14 @@
 # Importar todos los modelos para que SQLModel los reconozca
-from models.users import User, UserCreate, UserPublic, UserUpdate
-from models.companies import Company, CompanyCreate, CompanyUpdate, CompanyPublic
-from models.restaurants import Restaurant, RestaurantCreate, RestaurantUpdate, RestaurantPublic
-from models.roles import Role, RoleCreate, RoleUpdate, RolePublic
-from models.user_roles import UserRole, UserRoleCreate, UserRoleUpdate, UserRolePublic
-from models.tax_rates import TaxRate, TaxRateCreate, TaxRateUpdate, TaxRatePublic
-from models.categories import Category, CategoryCreate, CategoryUpdate, CategoryPublic
-from models.products import Product, ProductCreate, ProductUpdate, ProductPublic
-from models.restaurant_tables import RestaurantTable, RestaurantTableCreate, RestaurantTableUpdate, RestaurantTablePublic
-from models.orders import Order, OrderCreate, OrderUpdate, OrderPublic
-from models.order_items import OrderItem, OrderItemCreate, OrderItemUpdate, OrderItemPublic
-from models.payments import Payment, PaymentCreate, PaymentUpdate, PaymentPublic
-from models.invoices import Invoice, InvoiceCreate, InvoiceUpdate, InvoicePublic
-from models.invoice_items import InvoiceItem, InvoiceItemCreate, InvoiceItemUpdate, InvoiceItemPublic
-from models.invoice_corrections import InvoiceCorrection, InvoiceCorrectionCreate, InvoiceCorrectionUpdate, InvoiceCorrectionPublic
+from models.auth.users import User, UserCreate, UserPublic, UserUpdate
+from models.auth.rol import Rol, RolCreate, RolPublic, RolUpdate
+from models.auth.permiso import Permiso, PermisoCreate, PermisoPublic, PermisoUpdate
+from models.auth.roluser import RolUserBase, RolUserCreate, RolUserPublic, RolUserUpdate
+from models.auth.permisorol import PermisoRol, PermisoRolCreate, PermisoRolPublic, PermisoRolUpdate
+from models.auth.permisousuario import PermisoUsuario, PermisoUsuarioCreate, PermisoUsuarioPublic, PermisoUsuarioUpdate
+from models.company.restaurante import Restaurante, RestauranteCreate, RestaurantePublic, RestauranteUpdate
+from models.company.empresa import Empresa
+from models.company.mesarestaurante import MesaRestaurante
+from models.product.categoria import Categoria
 
 __all__ = [
     # Users
@@ -21,75 +16,40 @@ __all__ = [
     "UserCreate",
     "UserUpdate",
     "UserPublic",
-    # Companies
-    "Company",
-    "CompanyCreate",
-    "CompanyUpdate",
-    "CompanyPublic",
-    # Restaurants
-    "Restaurant",
-    "RestaurantCreate",
-    "RestaurantUpdate",
-    "RestaurantPublic",
     # Roles
-    "Role",
-    "RoleCreate",
-    "RoleUpdate",
-    "RolePublic",
-    # UserRoles
-    "UserRole",
-    "UserRoleCreate",
-    "UserRoleUpdate",
-    "UserRolePublic",
-    # TaxRates
-    "TaxRate",
-    "TaxRateCreate",
-    "TaxRateUpdate",
-    "TaxRatePublic",
-    # Categories
-    "Category",
-    "CategoryCreate",
-    "CategoryUpdate",
-    "CategoryPublic",
-    # Products
-    "Product",
-    "ProductCreate",
-    "ProductUpdate",
-    "ProductPublic",
-    # RestaurantTables
-    "RestaurantTable",
-    "RestaurantTableCreate",
-    "RestaurantTableUpdate",
-    "RestaurantTablePublic",
-    # Orders
-    "Order",
-    "OrderCreate",
-    "OrderUpdate",
-    "OrderPublic",
-    # OrderItems
-    "OrderItem",
-    "OrderItemCreate",
-    "OrderItemUpdate",
-    "OrderItemPublic",
-    # Payments
-    "Payment",
-    "PaymentCreate",
-    "PaymentUpdate",
-    "PaymentPublic",
-    # Invoices
-    "Invoice",
-    "InvoiceCreate",
-    "InvoiceUpdate",
-    "InvoicePublic",
-    # InvoiceItems
-    "InvoiceItem",
-    "InvoiceItemCreate",
-    "InvoiceItemUpdate",
-    "InvoiceItemPublic",
-    # InvoiceCorrections
-    "InvoiceCorrection",
-    "InvoiceCorrectionCreate",
-    "InvoiceCorrectionUpdate",
-    "InvoiceCorrectionPublic",
+    "Rol",
+    "RolCreate",
+    "RolPublic",
+    "RolUpdate",
+    # Permisos
+    "Permiso",
+    "PermisoCreate",
+    "PermisoPublic",
+    "PermisoUpdate",
+    # RolUser
+    "RolUserBase",
+    "RolUserCreate",
+    "RolUserUpdate",
+    "RolUserPublic",
+    # PermisoRol
+    "PermisoRol",
+    "PermisoRolCreate",
+    "PermisoRolUpdate",
+    "PermisoRolPublic",
+    # PermisoUsuario
+    "PermisoUsuario",
+    "PermisoUsuarioCreate",
+    "PermisoUsuarioUpdate",
+    "PermisoUsuarioPublic",
+    # Restaurante
+    "Restaurante",
+    "RestauranteCreate",
+    "RestauranteUpdate",
+    "RestaurantePublic",
+    # Empresa
+    "Empresa",
+    # MesaRestaurante
+    "MesaRestaurante",
+    # Categoria
+    "Categoria",
 ]
-
