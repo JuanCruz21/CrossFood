@@ -1,16 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Popup, AlertPopup, usePopup } from 'app/ui/popUp';
 import { Button } from 'app/ui/buttons';
+import { api, ApiError } from '@/lib/api';
+import type { MesaRestaurante, MesaRestauranteCreate, MesaRestauranteUpdate, Restaurante } from '@/types/company';
 
-interface Table {
-  id: number;
-  number: number;
-  capacity: number;
-  status: 'occupied' | 'available' | 'reserved';
-  customers: number;
-  order: number | null;
+interface Table extends MesaRestaurante {
+  status?: 'occupied' | 'available' | 'reserved';
+  customers?: number;
+  order?: number | null;
 }
 
 export default function TablesPage() {
@@ -19,20 +18,114 @@ export default function TablesPage() {
   const deleteTablePopup = usePopup();
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const tables: Table[] = [
-    { id: 1, number: 1, capacity: 4, status: 'occupied', customers: 3, order: 45 },
-    { id: 2, number: 2, capacity: 2, status: 'available', customers: 0, order: null },
-    { id: 3, number: 3, capacity: 6, status: 'occupied', customers: 5, order: 98 },
-    { id: 4, number: 4, capacity: 4, status: 'reserved', customers: 0, order: null },
-    { id: 5, number: 5, capacity: 4, status: 'occupied', customers: 4, order: 101 },
-    { id: 6, number: 6, capacity: 2, status: 'available', customers: 0, order: null },
-    { id: 7, number: 7, capacity: 8, status: 'occupied', customers: 7, order: 99 },
-    { id: 8, number: 8, capacity: 4, status: 'available', customers: 0, order: null },
-    { id: 9, number: 9, capacity: 2, status: 'occupied', customers: 2, order: 102 },
-    { id: 10, number: 10, capacity: 4, status: 'available', customers: 0, order: null },
-    { id: 11, number: 11, capacity: 6, status: 'reserved', customers: 0, order: null },
-    { id: 12, number: 12, capacity: 4, status: 'occupied', customers: 3, order: 100 },
-  ];
+  const [tables, setTables] = useState<Table[]>([]);
+  const [restauranteId, setRestauranteId] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [formData, setFormData] = useState<MesaRestauranteCreate>({
+    numero_mesa: 0,
+    capacidad: 0,
+    restaurante_id: '',
+  });
+
+  // Load data
+  useEffect(() => {
+    loadUserRestaurante();
+  }, []);
+
+  useEffect(() => {
+    if (restauranteId) {
+      loadMesas();
+    }
+  }, [restauranteId]);
+
+  const loadUserRestaurante = async () => {
+    try {
+      const response = await api.get('/users/me');
+      const user = response.data;
+      if (user.restaurante_id) {
+        setRestauranteId(user.restaurante_id);
+        setFormData(prev => ({ ...prev, restaurante_id: user.restaurante_id }));
+      }
+    } catch (err) {
+      console.error('Error loading user restaurant:', err);
+      setError('No se pudo cargar el restaurante del usuario');
+    }
+  };
+
+  const loadMesas = async () => {
+    try {
+      setIsLoading(true);
+      const response = await api.get(`/mesas/restaurante/${restauranteId}`);
+      const mesasData = response.data?.data || [];
+      // Agregar status por defecto
+      const mesasWithStatus = mesasData.map((mesa: MesaRestaurante) => ({
+        ...mesa,
+        status: 'available' as const,
+        customers: 0,
+        order: null,
+      }));
+      setTables(mesasWithStatus);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Error al cargar mesas');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCreateMesa = async () => {
+    try {
+      setError(null);
+      await api.post('/mesas/', formData);
+      setSuccess('Mesa creada exitosamente');
+      addTablePopup.close();
+      resetForm();
+      loadMesas();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Error al crear mesa');
+    }
+  };
+
+  const handleUpdateMesa = async () => {
+    if (!selectedTable) return;
+    try {
+      setError(null);
+      const updateData: MesaRestauranteUpdate = {
+        numero_mesa: formData.numero_mesa,
+        capacidad: formData.capacidad,
+      };
+      await api.patch(`/mesas/${selectedTable.id}`, updateData);
+      setSuccess('Mesa actualizada exitosamente');
+      editTablePopup.close();
+      resetForm();
+      loadMesas();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Error al actualizar mesa');
+    }
+  };
+
+  const handleDeleteMesa = async () => {
+    if (!selectedTable) return;
+    try {
+      setError(null);
+      await api.delete(`/mesas/${selectedTable.id}`);
+      setSuccess('Mesa eliminada exitosamente');
+      deleteTablePopup.close();
+      setSelectedTable(null);
+      loadMesas();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Error al eliminar mesa');
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      numero_mesa: 0,
+      capacidad: 0,
+      restaurante_id: restauranteId,
+    });
+    setSelectedTable(null);
+  };
 
   const getStatusInfo = (status: string) => {
     switch (status) {
@@ -104,6 +197,20 @@ export default function TablesPage() {
         </Button>
       </div>
 
+      {/* Success/Error Messages */}
+      {error && (
+        <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-800 dark:text-red-200">
+          {error}
+          <button onClick={() => setError(null)} className="float-right font-bold">×</button>
+        </div>
+      )}
+      {success && (
+        <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-4 text-green-800 dark:text-green-200">
+          {success}
+          <button onClick={() => setSuccess(null)} className="float-right font-bold">×</button>
+        </div>
+      )}
+
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4">
@@ -127,7 +234,7 @@ export default function TablesPage() {
       {/* Tables Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {tables.map((table) => {
-          const statusInfo = getStatusInfo(table.status);
+          const statusInfo = getStatusInfo(table.status || 'available');
           return (
             <div
               key={table.id}
@@ -138,13 +245,13 @@ export default function TablesPage() {
                 {/* Número de mesa grande y centrado */}
                 <div className="text-center mb-3">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[var(--muted)] to-[var(--card)] border border-[var(--border)] mb-3">
-                    <span className="text-2xl font-bold text-[var(--foreground)]">{table.number}</span>
+                    <span className="text-2xl font-bold text-[var(--foreground)]">{table.numero_mesa}</span>
                   </div>
                   <div className="flex items-center justify-center gap-2 text-sm text-[var(--muted-foreground)]">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
-                    <span>{table.capacity} personas</span>
+                    <span>{table.capacidad} personas</span>
                   </div>
                 </div>
 
@@ -225,13 +332,18 @@ export default function TablesPage() {
                   <Button
                     onClick={() => {
                       setSelectedTable(table);
+                      setFormData({
+                        numero_mesa: table.numero_mesa,
+                        capacidad: table.capacidad,
+                        restaurante_id: table.restaurante_id,
+                      });
                       editTablePopup.open();
                     }}
                     variant="ghost"
                     size="sm"
                     className="flex-1"
                   >
-                    <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                     Editar
@@ -296,16 +408,13 @@ export default function TablesPage() {
       {/* Popup: Nueva Mesa */}
       <Popup
         isOpen={addTablePopup.isOpen}
-        onClose={addTablePopup.close}
+        onClose={() => {
+          addTablePopup.close();
+          resetForm();
+        }}
         title="Nueva Mesa"
         description="Crea una nueva mesa para el restaurante"
-        onConfirm={async () => {
-          setIsLoading(true);
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          console.log('Nueva mesa creada');
-          setIsLoading(false);
-          addTablePopup.close();
-        }}
+        onConfirm={handleCreateMesa}
         confirmText="Crear Mesa"
         isLoading={isLoading}
         size="md"
@@ -313,34 +422,30 @@ export default function TablesPage() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-              Número de Mesa
+              Número de Mesa *
             </label>
             <input
               type="number"
+              value={formData.numero_mesa || ''}
+              onChange={(e) => setFormData({ ...formData, numero_mesa: parseInt(e.target.value) || 0 })}
               className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
               placeholder="1"
               min="1"
+              required
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-              Capacidad (personas)
+              Capacidad (personas) *
             </label>
             <input
               type="number"
+              value={formData.capacidad || ''}
+              onChange={(e) => setFormData({ ...formData, capacidad: parseInt(e.target.value) || 0 })}
               className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
               placeholder="4"
               min="1"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-              Ubicación (opcional)
-            </label>
-            <input
-              type="text"
-              className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
-              placeholder="Ej: Terraza, Interior, VIP"
+              required
             />
           </div>
         </div>
@@ -349,16 +454,13 @@ export default function TablesPage() {
       {/* Popup: Editar Mesa */}
       <Popup
         isOpen={editTablePopup.isOpen}
-        onClose={editTablePopup.close}
-        title={`Editar Mesa ${selectedTable?.number || ''}`}
-        description="Modifica los datos de la mesa"
-        onConfirm={async () => {
-          setIsLoading(true);
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          console.log('Mesa actualizada:', selectedTable);
-          setIsLoading(false);
+        onClose={() => {
           editTablePopup.close();
+          resetForm();
         }}
+        title={`Editar Mesa ${selectedTable?.numero_mesa || ''}`}
+        description="Modifica los datos de la mesa"
+        onConfirm={handleUpdateMesa}
         confirmText="Guardar Cambios"
         isLoading={isLoading}
         size="md"
@@ -366,58 +468,42 @@ export default function TablesPage() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-              Número de Mesa
+              Número de Mesa *
             </label>
             <input
               type="number"
-              defaultValue={selectedTable?.number}
+              value={formData.numero_mesa || ''}
+              onChange={(e) => setFormData({ ...formData, numero_mesa: parseInt(e.target.value) || 0 })}
               className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
               min="1"
+              required
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-              Capacidad (personas)
+              Capacidad (personas) *
             </label>
             <input
               type="number"
-              defaultValue={selectedTable?.capacity}
+              value={formData.capacidad || ''}
+              onChange={(e) => setFormData({ ...formData, capacidad: parseInt(e.target.value) || 0 })}
               className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
               min="1"
+              required
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-              Estado
-            </label>
-            <select
-              defaultValue={selectedTable?.status}
-              className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
-            >
-              <option value="available">Disponible</option>
-              <option value="occupied">Ocupada</option>
-              <option value="reserved">Reservada</option>
-            </select>
           </div>
         </div>
       </Popup>
 
-      {/* Popup: Confirmación de Liberación/Cancelación */}
+      {/* Popup: Confirmación de Eliminación */}
       <AlertPopup
         isOpen={deleteTablePopup.isOpen}
         onClose={deleteTablePopup.close}
-        onConfirm={() => {
-          console.log('Mesa liberada/cancelada:', selectedTable);
-          deleteTablePopup.close();
-        }}
+        onConfirm={handleDeleteMesa}
         type="warning"
-        title={selectedTable?.status === 'occupied' ? '¿Liberar mesa?' : '¿Cancelar reserva?'}
-        message={
-          selectedTable?.status === 'occupied'
-            ? 'La mesa se marcará como disponible. Asegúrate de que el pedido haya sido pagado.'
-            : 'La reserva será cancelada y la mesa quedará disponible.'
-        }
-        confirmText="Sí, continuar"
+        title="¿Eliminar mesa?"
+        message={`¿Estás seguro de que deseas eliminar la mesa ${selectedTable?.numero_mesa}? Esta acción no se puede deshacer.`}
+        confirmText="Sí, eliminar"
         cancelText="Cancelar"
       />
     </div>

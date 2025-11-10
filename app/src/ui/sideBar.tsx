@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ThemeToggle, useTheme } from '../app/hooks/useTheme';
 import { toast } from 'react-toastify';
-import { clearAuthToken } from 'app/lib/api';
+import { api, clearAuthToken } from 'app/lib/api';
 import { MenuItem, sidebarConfig } from './sidebarConfig';
+import type { User } from '@/types/auth';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -75,6 +76,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { theme } = useTheme();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  // Load current user data
+  useEffect(() => {
+    const loadCurrentUser = async () => {
+      try {
+        const response = await api.post('/login/test-token');
+        setCurrentUser(response.data);
+      } catch (error) {
+        console.error('Error loading user:', error);
+        // Si falla la autenticación, redirigir al login
+        router.replace('/auth/login');
+      }
+    };
+
+    loadCurrentUser();
+  }, [router]);
 
   const handleLogout = () => {
     // Limpiar cookie que guardamos en el login
@@ -180,11 +198,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           {/* User Info & Logout */}
           <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--muted)]">
             <div className="w-10 h-10 rounded-full bg-[var(--primary)] flex items-center justify-center text-[var(--primary-foreground)] font-semibold">
-              JD
+              {currentUser?.full_name
+                ? currentUser.full_name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .slice(0, 2)
+                : '??'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-[var(--foreground)] truncate">John Doe</p>
-              <p className="text-xs text-[var(--muted-foreground)] truncate">admin@crossfood.com</p>
+              <p className="text-sm font-medium text-[var(--foreground)] truncate">
+                {currentUser?.full_name || 'Cargando...'}
+              </p>
+              <p className="text-xs text-[var(--muted-foreground)] truncate">
+                {currentUser?.email || 'cargando...'}
+              </p>
             </div>
           </div>
 

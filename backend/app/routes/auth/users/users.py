@@ -30,21 +30,35 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.get(
     "/",
-    dependencies=[Depends(get_current_active_superuser)],
     response_model=UsersPublic,
 )
-def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
+def read_users(
+    session: SessionDep, 
+    current_user: CurrentUser,
+    skip: int = 0, 
+    limit: int = 100
+) -> Any:
     """
     Retrieve users.
+    - Superusuarios: ven todos los usuarios
+    - Usuarios normales: solo ven usuarios de su empresa
     """
-
-    count_statement = select(func.count()).select_from(User)
-    count = session.exec(count_statement).one()
-
-    statement = select(User).offset(skip).limit(limit)
-    users = session.exec(statement).all()
+    if current_user.is_superuser:
+        # Superadmin sees all users
+        count_statement = select(func.count()).select_from(User)
+        count = session.exec(count_statement).one()
+        statement = select(User).offset(skip).limit(limit)
+        users = session.exec(statement).all()
+    else:
+        # Normal user sees only users from their empresa
+        if not current_user.empresa_id:
+            return UsersPublic(data=[], count=0)
+        
+        statement = select(User).where(User.empresa_id == current_user.empresa_id)
+        users = session.exec(statement).all()
+        count = len(users)
+    
     user_public_list = [UserPublic.model_validate(user) for user in users]
-
     return UsersPublic(data=user_public_list, count=count)
 
 
@@ -142,17 +156,73 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
 @router.post("/signup", response_model=UserPublic)
 def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     """
-    Create new user without the need to be logged in.
+    Create new user with automatic empresa and restaurante creation.
+    
+    Flow:
+    1. Validates user email is unique
+    2. Creates empresa with provided name
+    3. Creates restaurante associated to the empresa
+    4. Creates user associated to both empresa and restaurante
     """
+    from models.company.empresa import Empresa, EmpresaCreate
+    from models.company.restaurante import Restaurante, RestauranteCreate
+    
+    # 1. Validate user doesn't exist
     user = crud.get_user_by_email(session=session, email=user_in.email)
     if user:
         raise HTTPException(
             status_code=400,
             detail="The user with this email already exists in the system",
         )
-    user_create = UserCreate.model_validate(user_in)
-    user = crud.create_user(session=session, user_create=user_create)
-    return user
+    
+    try:
+        # 2. Create Empresa
+        empresa_data = EmpresaCreate(
+            nombre=user_in.nombre_empresa,
+            direccion=user_in.direccion_empresa,
+            ciudad=user_in.ciudad_empresa,
+            email=user_in.email
+        )
+        empresa = Empresa.model_validate(empresa_data)
+        session.add(empresa)
+        session.flush()  # Get empresa.id without committing
+        
+        # 3. Create Restaurante
+        restaurante_data = RestauranteCreate(
+            nombre=user_in.nombre_restaurante,
+            direccion=user_in.direccion_restaurante,
+            telefono=user_in.telefono_restaurante,
+            email=user_in.email,
+            empresa_id=empresa.id
+        )
+        restaurante = Restaurante.model_validate(restaurante_data)
+        session.add(restaurante)
+        session.flush()  # Get restaurante.id without committing
+        
+        # 4. Create User with associations
+        user_create = UserCreate(
+            email=user_in.email,
+            password=user_in.password,
+            full_name=user_in.full_name,
+            empresa_id=empresa.id,
+            restaurante_id=restaurante.id,
+            is_active=True,
+            is_superuser=False
+        )
+        user = crud.create_user(session=session, user_create=user_create)
+        
+        # Commit all changes
+        session.commit()
+        session.refresh(user)
+        
+        return user
+        
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error creating user, empresa and restaurante: {str(e)}"
+        )
 
 
 @router.get("/{user_id}", response_model=UserPublic)

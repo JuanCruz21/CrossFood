@@ -5,10 +5,11 @@ from models.auth.permiso import Permiso, PermisoCreate, PermisoPublic, PermisoUp
 from models.auth.roluser import RolUserBase, RolUserCreate, RolUserPublic, RolUserUpdate
 from models.auth.permisorol import PermisoRol, PermisoRolCreate, PermisoRolPublic, PermisoRolUpdate
 from models.auth.permisousuario import PermisoUsuario, PermisoUsuarioCreate, PermisoUsuarioPublic, PermisoUsuarioUpdate
-from models.company.restaurante import Restaurante, RestauranteCreate, RestaurantePublic, RestauranteUpdate
-from models.company.empresa import Empresa
-from models.company.mesarestaurante import MesaRestaurante
-from models.product.categoria import Categoria
+from models.company.restaurante import Restaurante, RestauranteCreate, RestaurantePublic, RestauranteUpdate, RestaurantesPublic
+from models.company.empresa import Empresa, EmpresaCreate, EmpresaPublic, EmpresaUpdate, EmpresasPublic
+from models.company.mesarestaurante import MesaRestaurante, MesaRestauranteCreate, MesaRestaurantePublic, MesaRestauranteUpdate, MesaRestaurantesPublic
+from models.product.categoria import Categoria, CategoriaCreate, CategoriaPublic, CategoriaUpdate, CategoriasPublic
+from models.product.tasaimpositiva import TasaImpositiva, TasaImpositivaCreate, TasaImpositivaPublic, TasaImpositivaUpdate, TasasImpositivasPublic
 
 __all__ = [
     # Users
@@ -41,15 +42,34 @@ __all__ = [
     "PermisoUsuarioCreate",
     "PermisoUsuarioUpdate",
     "PermisoUsuarioPublic",
+    # Empresa
+    "Empresa",
+    "EmpresaCreate",
+    "EmpresaUpdate",
+    "EmpresaPublic",
+    "EmpresasPublic",
     # Restaurante
     "Restaurante",
     "RestauranteCreate",
     "RestauranteUpdate",
     "RestaurantePublic",
-    # Empresa
-    "Empresa",
+    "RestaurantesPublic",
     # MesaRestaurante
     "MesaRestaurante",
+    "MesaRestauranteCreate",
+    "MesaRestauranteUpdate",
+    "MesaRestaurantePublic",
+    "MesaRestaurantesPublic",
     # Categoria
     "Categoria",
+    "CategoriaCreate",
+    "CategoriaUpdate",
+    "CategoriaPublic",
+    "CategoriasPublic",
+    # TasaImpositiva
+    "TasaImpositiva",
+    "TasaImpositivaCreate",
+    "TasaImpositivaUpdate",
+    "TasaImpositivaPublic",
+    "TasasImpositivasPublic",
 ]

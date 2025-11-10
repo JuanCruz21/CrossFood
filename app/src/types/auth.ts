@@ -33,6 +33,18 @@ export interface UserUpdate {
   is_superuser?: boolean;
 }
 
+export interface UserRegister {
+  email: string;
+  password: string;
+  full_name: string;
+  nombre_empresa: string;
+  direccion_empresa: string;
+  ciudad_empresa: string;
+  nombre_restaurante: string;
+  direccion_restaurante?: string;
+  telefono_restaurante?: string;
+}
+
 // ============================================
 // Role Types
 // ============================================

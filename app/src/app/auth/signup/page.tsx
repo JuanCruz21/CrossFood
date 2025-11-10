@@ -12,12 +12,19 @@ export default function SignupPage() {
   const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
+    full_name: '',
     email: '',
     password: '',
     confirmPassword: '',
+    nombre_empresa: '',
+    direccion_empresa: '',
+    ciudad_empresa: '',
+    nombre_restaurante: '',
+    direccion_restaurante: '',
+    telefono_restaurante: '',
     acceptTerms: false,
   });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -34,30 +41,39 @@ export default function SignupPage() {
       return;
     }
     api.post('/users/signup', {
-      full_name : formData.name,
+      full_name: formData.full_name,
       email: formData.email,
       password: formData.password,
+      nombre_empresa: formData.nombre_empresa,
+      direccion_empresa: formData.direccion_empresa,
+      ciudad_empresa: formData.ciudad_empresa,
+      nombre_restaurante: formData.nombre_restaurante,
+      direccion_restaurante: formData.direccion_restaurante || null,
+      telefono_restaurante: formData.telefono_restaurante || null,
     })
       .then(response => {
         console.log('Signup successful:', response.data);
         toast.success('Cuenta creada exitosamente. Por favor, inicia sesión.');
-        // Aquí puedes redirigir al usuario o guardar el token, etc.
+        setTimeout(() => {
+          window.location.href = '/auth/login';
+        }, 2000);
       })
       .catch(error => {
         console.error('Signup error:', error);
         toast.error('Error al crear la cuenta. Por favor, intenta nuevamente.');
-        // Manejo de errores, mostrar mensaje al usuario, etc.
       })
       .finally(() => {
         setIsLoading(false);
       });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    const isCheckbox = e.target instanceof HTMLInputElement && e.target.type === 'checkbox';
+    
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value
     }));
   };
 
@@ -108,18 +124,18 @@ export default function SignupPage() {
               {/* Nombre */}
               <div>
                 <label 
-                  htmlFor="name" 
+                  htmlFor="full_name" 
                   className="block text-sm font-medium text-[var(--foreground)] mb-2"
                 >
                   Nombre completo
                 </label>
                 <input
-                  id="name"
-                  name="name"
+                  id="full_name"
+                  name="full_name"
                   type="text"
                   autoComplete="name"
                   required
-                  value={formData.name}
+                  value={formData.full_name}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-colors"
                   placeholder="Juan Pérez"
@@ -191,6 +207,132 @@ export default function SignupPage() {
                   className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-colors"
                   placeholder="••••••••"
                 />
+              </div>
+
+              {/* Datos de la Empresa */}
+              <div className="space-y-4 pt-4 border-t border-[var(--border)]">
+                <h3 className="text-sm font-semibold text-[var(--foreground)]">
+                  Información de tu Empresa
+                </h3>
+                
+                <div>
+                  <label 
+                    htmlFor="nombre_empresa" 
+                    className="block text-sm font-medium text-[var(--foreground)] mb-2"
+                  >
+                    Nombre de la empresa *
+                  </label>
+                  <input
+                    id="nombre_empresa"
+                    name="nombre_empresa"
+                    type="text"
+                    required
+                    value={formData.nombre_empresa}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-colors"
+                    placeholder="Mi Empresa S.A."
+                  />
+                </div>
+
+                <div>
+                  <label 
+                    htmlFor="direccion_empresa" 
+                    className="block text-sm font-medium text-[var(--foreground)] mb-2"
+                  >
+                    Dirección de la empresa *
+                  </label>
+                  <input
+                    id="direccion_empresa"
+                    name="direccion_empresa"
+                    type="text"
+                    required
+                    value={formData.direccion_empresa}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-colors"
+                    placeholder="Calle Principal 123"
+                  />
+                </div>
+
+                <div>
+                  <label 
+                    htmlFor="ciudad_empresa" 
+                    className="block text-sm font-medium text-[var(--foreground)] mb-2"
+                  >
+                    Ciudad *
+                  </label>
+                  <input
+                    id="ciudad_empresa"
+                    name="ciudad_empresa"
+                    type="text"
+                    required
+                    value={formData.ciudad_empresa}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-colors"
+                    placeholder="Buenos Aires"
+                  />
+                </div>
+              </div>
+
+              {/* Datos del Restaurante */}
+              <div className="space-y-4 pt-4 border-t border-[var(--border)]">
+                <h3 className="text-sm font-semibold text-[var(--foreground)]">
+                  Información de tu Restaurante
+                </h3>
+
+                <div>
+                  <label 
+                    htmlFor="nombre_restaurante" 
+                    className="block text-sm font-medium text-[var(--foreground)] mb-2"
+                  >
+                    Nombre del restaurante *
+                  </label>
+                  <input
+                    id="nombre_restaurante"
+                    name="nombre_restaurante"
+                    type="text"
+                    required
+                    value={formData.nombre_restaurante}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-colors"
+                    placeholder="Restaurante La Moderna"
+                  />
+                </div>
+
+                <div>
+                  <label 
+                    htmlFor="direccion_restaurante" 
+                    className="block text-sm font-medium text-[var(--foreground)] mb-2"
+                  >
+                    Dirección del restaurante
+                  </label>
+                  <input
+                    id="direccion_restaurante"
+                    name="direccion_restaurante"
+                    type="text"
+                    value={formData.direccion_restaurante}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-colors"
+                    placeholder="Av. Corrientes 1234 (opcional)"
+                  />
+                </div>
+
+                <div>
+                  <label 
+                    htmlFor="telefono_restaurante" 
+                    className="block text-sm font-medium text-[var(--foreground)] mb-2"
+                  >
+                    Teléfono del restaurante
+                  </label>
+                  <input
+                    id="telefono_restaurante"
+                    name="telefono_restaurante"
+                    type="tel"
+                    value={formData.telefono_restaurante}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-colors"
+                    placeholder="+54 11 1234-5678 (opcional)"
+                  />
+                </div>
               </div>
 
               {/* Terms and conditions */}

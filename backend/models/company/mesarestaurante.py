@@ -10,9 +10,9 @@ class MesaRestauranteCreate(MesaRestauranteBase):
     pass
 
 class MesaRestauranteUpdate(SQLModel):
-    numero_mesa: int
-    capacidad: int
-    restaurante_id: uuid.UUID
+    numero_mesa: int | None = None
+    capacidad: int | None = None
+    restaurante_id: uuid.UUID | None = None
 
 class MesaRestaurante(MesaRestauranteBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)

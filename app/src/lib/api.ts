@@ -144,7 +144,7 @@ export async function apiRequest<T = any>(
       }
 
       throw new ApiError(
-        data?.message || data?.error || `HTTP Error ${response.status}`,
+        data?.message || data?.error || `Error HTTP ${response.status}`,
         response.status,
         data
       );
@@ -160,12 +160,12 @@ export async function apiRequest<T = any>(
 
     // Handle timeout
     if (error instanceof DOMException && error.name === 'AbortError') {
-      throw new ApiError('Request timeout', 408);
+      throw new ApiError('Tiempo de espera agotado', 408);
     }
 
     // Handle network errors
     if (error instanceof TypeError) {
-      throw new ApiError('Network error. Please check your connection.', 0);
+      throw new ApiError('Error de red. Por favor, verifica tu conexión.', 0);
     }
 
     // Re-throw ApiError
@@ -175,7 +175,7 @@ export async function apiRequest<T = any>(
 
     // Unknown error
     throw new ApiError(
-      error instanceof Error ? error.message : 'Unknown error occurred',
+      error instanceof Error ? error.message : 'Error inesperado, por favor intente nuevamente.',
       500
     );
   }
