@@ -36,7 +36,7 @@ export default function SplashLogo() {
     <View className="items-center">
       <Animated.View style={logoStyle}>
         <Image
-          source={require("../assets/logo.png")}
+          source={require("./../assets/images/splash-icon.png")}
           className="w-32 h-32 mb-4"
           resizeMode="contain"
         />

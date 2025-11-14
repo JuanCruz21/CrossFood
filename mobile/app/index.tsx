@@ -8,7 +8,7 @@ export default function HomeScreen() {
       <View className="flex-row items-center justify-between mb-6">
         <Text className="text-2xl font-bold text-gray-800">Bienvenido 🍽️</Text>
         <Image
-          source={require("../../assets/logo.png")}
+          source={require("./../assets/images/splash-icon.png")}
           className="w-10 h-10"
           resizeMode="contain"
         />
@@ -35,7 +35,7 @@ export default function HomeScreen() {
             className="flex-row items-center p-4 mb-4 bg-gray-100 rounded-2xl"
           >
             <Image
-              source={require("../../assets/logo.png")}
+              source={require("./../assets/images/splash-icon.png")}
               className="w-16 h-16 mr-4 rounded-lg"
             />
             <View>
