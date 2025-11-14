@@ -7,58 +7,56 @@ module.exports = {
     "./screens/**/*.{js,jsx,ts,tsx}",
   ],
   presets: [require("nativewind/preset")],
+
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        // Paleta personalizada
+        "naranja-apagado": "#E86F24",
+        "naranja-claro": "#FF8A3D",
+        gris: "#2B2B2B",
+
         primary: {
-          DEFAULT: "var(--primary)",
-          foreground: "var(--primary-foreground)",
+          DEFAULT: "#E86F24",
+          foreground: "#FFFFFF",
         },
         accent: {
-          DEFAULT: "var(--accent)",
-          foreground: "var(--accent-foreground)",
+          DEFAULT: "#FF8A3D",
+          foreground: "#FFFFFF",
         },
-        success: {
-          DEFAULT: "var(--success)",
-          foreground: "var(--success-foreground)",
-        },
-        error: {
-          DEFAULT: "var(--error)",
-          foreground: "var(--error-foreground)",
-        },
-        warning: {
-          DEFAULT: "var(--warning)",
-          foreground: "var(--warning-foreground)",
-        },
-        neutral: "var(--neutral)",
-        muted: {
-          DEFAULT: "var(--muted)",
-          foreground: "var(--muted-foreground)",
-        },
-        border: "var(--border)",
-        card: {
-          DEFAULT: "var(--card)",
-          foreground: "var(--card-foreground)",
-        },
-        input: "var(--input)",
-        ring: "var(--ring)",
-        // Colores personalizados
-        "naranja-apagado": "var(--naranja-apagado)",
-        "naranja-claro": "var(--naranja-claro)",
-        "gris": "var(--gris)",
+        background: "#FFFFFF",
+        foreground: "#111111",
       },
-      fontFamily: {
-        sans: ["var(--font-sans)", "System"],
-        mono: ["var(--font-mono)", "monospace"],
+
+      //Tamaños de fuente adaptados para mobile
+      fontSize: {
+        xs: 12,
+        sm: 14,
+        base: 16,
+        lg: 18,
+        xl: 22,
+        "2xl": 28,
+        "3xl": 34,
       },
+
+      //Radio adaptado a diseño mobile
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        sm: 6,
+        md: 10,
+        lg: 14,
+        xl: 24,
+        full: 999,
+      },
+
+      //Fuentes personalizadas al estilo móvil
+      fontFamily: {
+        opensans: ["OpenSans-Regular"],
+        "opensans-bold": ["OpenSans-Bold"],
+        roboto: ["Roboto-Regular"],
+        "roboto-bold": ["Roboto-Bold"],
       },
     },
   },
+
   plugins: [],
 };

@@ -1,23 +1,29 @@
 import React, { useEffect } from "react";
 import { useRouter } from "expo-router";
-import SplashBackground from "../../components/SplashBackground";
-import SplashLogo from "../../components/SplashLogo";
-import Loader from "../../components/Loader";
+import SplashBackground from "../../components/Splash/SplashBackground";
+import SplashLogoCircle from "../../components/Splash/SplashLogoCircle";
+import SplashLoader from "../../components/Splash/SplashLoader";
+
+const LOGO = require("./../../assets/images/2.png");
 
 export default function SplashScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      router.replace("/");
-    }, 3000);
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => {
+
+      router.push("/(auth)/login");
+    }, 2600);
+
+    return () => clearTimeout(t);
   }, []);
 
   return (
     <SplashBackground>
-      <SplashLogo />
-      <Loader />
+      <SplashLogoCircle
+        logoSource={LOGO}
+      />
+      <SplashLoader />
     </SplashBackground>
   );
 }
