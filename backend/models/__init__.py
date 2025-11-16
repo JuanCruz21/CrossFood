@@ -10,6 +10,9 @@ from models.company.empresa import Empresa, EmpresaCreate, EmpresaPublic, Empres
 from models.company.mesarestaurante import MesaRestaurante, MesaRestauranteCreate, MesaRestaurantePublic, MesaRestauranteUpdate, MesaRestaurantesPublic
 from models.product.categoria import Categoria, CategoriaCreate, CategoriaPublic, CategoriaUpdate, CategoriasPublic
 from models.product.tasaimpositiva import TasaImpositiva, TasaImpositivaCreate, TasaImpositivaPublic, TasaImpositivaUpdate, TasasImpositivasPublic
+from models.product.orden import Orden, OrdenCreate, OrdenPublic, OrdenUpdate, OrdenesPublic
+from models.product.ordenitem import OrdenItem, OrdenItemCreate, OrdenItemPublic, OrdenItemUpdate, OrdenItemsPublic
+from models.product.producto import Producto, ProductoCreate, ProductoPublic, ProductoUpdate, ProductosPublic
 
 __all__ = [
     # Users
@@ -72,4 +75,22 @@ __all__ = [
     "TasaImpositivaUpdate",
     "TasaImpositivaPublic",
     "TasasImpositivasPublic",
+    # Orden
+    "Orden",
+    "OrdenCreate",
+    "OrdenUpdate",
+    "OrdenPublic",
+    "OrdenesPublic",
+    # OrdenItem
+    "OrdenItem",
+    "OrdenItemCreate",
+    "OrdenItemUpdate",
+    "OrdenItemPublic",
+    "OrdenItemsPublic",
+    # Producto
+    "Producto",
+    "ProductoCreate",
+    "ProductoUpdate",
+    "ProductoPublic",
+    "ProductosPublic",
 ]

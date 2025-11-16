@@ -22,3 +22,13 @@ class ProductoUpdate(SQLModel):
     stock: int
     empresa_id: uuid.UUID | None = None
     categoria_id: uuid.UUID | None = None
+
+class Producto(ProductoBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+
+class ProductoPublic(ProductoBase):
+    id: uuid.UUID
+
+class ProductosPublic(SQLModel):
+    data: list[ProductoPublic]
+    count: int
