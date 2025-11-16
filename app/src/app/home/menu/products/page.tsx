@@ -56,6 +56,7 @@ export default function Products() {
         fetchProducts();
         fetchCategories();
         fetchTasas();
+        handleGetUserInfo();
     }, []);
 
     async function handleGetUserInfo() {
@@ -64,7 +65,7 @@ export default function Products() {
             const empId = response.data.empresa_id || '';
             const restId = response.data.restaurante_id || '';
             setEmpresaId(empId);
-            setFormData((prev) => ({ ...prev, restaurante_id: restId }));
+            setFormData((prev) => ({ ...prev, restaurante_id: restId, empresa_id: empId }));
         }
         return null;
     }
@@ -146,16 +147,21 @@ export default function Products() {
             
             // Si hay archivo de imagen, subirlo primero
             if (imageFile) {
-                if (!formData.empresa_id) {
+                const empresaIdToUse = formData.empresa_id || empresaId;
+                if (!empresaIdToUse) {
                     toast.error("Debe seleccionar una empresa antes de subir una imagen");
                     setIsLoading(false);
                     return;
                 }
-                imageUrl = await uploadImage(imageFile, formData.empresa_id);
+                imageUrl = await uploadImage(imageFile, empresaIdToUse);
             }
             
             // sanitize payload: remove empty string fields so backend receives null/omitted
-            const payload = { ...formData, imagen: imageUrl } as any;
+            const payload = { 
+                ...formData, 
+                imagen: imageUrl,
+                empresa_id: formData.empresa_id || empresaId 
+            } as any;
             Object.keys(payload).forEach((k) => {
                 if (payload[k] === '') delete payload[k];
             });
@@ -182,13 +188,13 @@ export default function Products() {
             
             // Si hay nuevo archivo de imagen, subirlo
             if (imageFile) {
-                const empresaId = formData.empresa_id || selectedProduct.empresa_id;
-                if (!empresaId) {
+                const empresaIdToUse = formData.empresa_id || selectedProduct.empresa_id || empresaId;
+                if (!empresaIdToUse) {
                     toast.error("No se pudo determinar la empresa del producto");
                     setIsLoading(false);
                     return;
                 }
-                imageUrl = await uploadImage(imageFile, empresaId);
+                imageUrl = await uploadImage(imageFile, empresaIdToUse);
             }
             
             const updateData: any = {
@@ -310,7 +316,7 @@ export default function Products() {
             imagen: '',
             categoria_id: '',
             restaurante_id: RESTAURANTE_ID,
-            empresa_id: EMPRESA_ID,
+            empresa_id: empresaId || EMPRESA_ID,
             tasa_impositiva_id: undefined,
         });
         setSelectedProduct(null);
@@ -672,13 +678,13 @@ export default function Products() {
                             type="file"
                             accept="image/*"
                             onChange={handleImageChange}
-                            className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                            className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]    dark:focus:ring-[var(--primary)]"
                         />
                         {imagePreview && (
-                            <div className="mt-2">
+                            <div className="mt-2 justify-center flex items-center">
                                 <img 
                                     src={imagePreview} 
-                                    alt="Preview" 
+                                    alt="Preview"
                                     className="w-32 h-32 object-cover rounded-lg"
                                 />
                             </div>
