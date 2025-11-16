@@ -76,6 +76,28 @@ BILL_WRITE = "bill.write"
 BILL_DELETE = "bill.delete"
 
 # ============================================
+# Permisos de Categorías
+# ============================================
+CATEGORIA_READ = "categoria.read"
+CATEGORIA_WRITE = "categoria.write"
+CATEGORIA_DELETE = "categoria.delete"
+
+# ============================================
+# Permisos de Tasa Impositiva
+# ============================================
+TASA_IMPOSITIVA_READ = "tasa_impositiva.read"
+TASA_IMPOSITIVA_WRITE = "tasa_impositiva.write"
+TASA_IMPOSITIVA_DELETE = "tasa_impositiva.delete"
+
+# =============================================
+# Permisos de Items de Orden
+# =============================================
+ORDER_ITEM_READ = "order_item.read"
+ORDER_ITEM_WRITE = "order_item.write"
+ORDER_ITEM_DELETE = "order_item.delete"
+
+
+# ============================================
 # Grupos de Permisos
 # ============================================
 
@@ -86,6 +108,10 @@ ADMIN_PERMISSIONS = [
     PERMISSION_READ, PERMISSION_WRITE, PERMISSION_DELETE,
     EMPRESA_READ, EMPRESA_WRITE, EMPRESA_DELETE,
     RESTAURANTE_READ, RESTAURANTE_WRITE, RESTAURANTE_DELETE,
+    MESA_READ, MESA_WRITE, MESA_DELETE,
+    ORDER_READ, ORDER_WRITE, ORDER_DELETE,
+    PRODUCT_READ, PRODUCT_WRITE, PRODUCT_DELETE,
+    BILL_READ, BILL_WRITE, BILL_DELETE,
 ]
 
 # Permisos básicos de lectura
@@ -135,6 +161,8 @@ def get_all_permissions() -> list[str]:
         PRODUCT_READ, PRODUCT_WRITE, PRODUCT_DELETE,
         # Facturas
         BILL_READ, BILL_WRITE, BILL_DELETE,
+        # Categorias
+        CATEGORIA_READ, CATEGORIA_WRITE, CATEGORIA_DELETE,
     ]
 
 

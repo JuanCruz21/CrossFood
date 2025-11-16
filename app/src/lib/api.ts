@@ -326,6 +326,327 @@ export function buildQueryString(params: Record<string, any>): string {
   return queryString ? `?${queryString}` : '';
 }
 
+// ============================================
+// Product & Order API Functions
+// ============================================
+
+import type {
+  TasaImpositiva,
+  TasaImpositivaCreate,
+  TasaImpositivaUpdate,
+  TasasImpositivasPublic,
+  Categoria,
+  CategoriaCreate,
+  CategoriaUpdate,
+  CategoriasPublic,
+  Producto,
+  ProductoCreate,
+  ProductoUpdate,
+  ProductosPublic,
+  ProductoStockUpdate,
+  Orden,
+  OrdenCreate,
+  OrdenUpdate,
+  OrdenesPublic,
+  OrdenEstadoUpdate,
+  OrdenItem,
+  OrdenItemCreate,
+  OrdenItemUpdate,
+  OrdenItemsPublic,
+  OrdenItemCantidadUpdate,
+  EstadoOrden,
+} from '../types/product';
+
+// ============================================
+// Tasa Impositiva (Tax Rate) API Functions
+// ============================================
+
+/**
+ * Get all tax rates
+ */
+export async function getTasasImpositivas(
+  skip: number = 0,
+  limit: number = 100
+): Promise<ApiResponse<TasasImpositivasPublic>> {
+  const params = buildQueryString({ skip, limit });
+  return api.get<TasasImpositivasPublic>(`/tasas-impositivas${params}`);
+}
+
+/**
+ * Get a specific tax rate by ID
+ */
+export async function getTasaImpositiva(id: string): Promise<ApiResponse<TasaImpositiva>> {
+  return api.get<TasaImpositiva>(`/tasas-impositivas/${id}`);
+}
+
+/**
+ * Create a new tax rate
+ */
+export async function createTasaImpositiva(
+  data: TasaImpositivaCreate
+): Promise<ApiResponse<TasaImpositiva>> {
+  return api.post<TasaImpositiva>('/tasas-impositivas', data);
+}
+
+/**
+ * Update a tax rate
+ */
+export async function updateTasaImpositiva(
+  id: string,
+  data: TasaImpositivaUpdate
+): Promise<ApiResponse<TasaImpositiva>> {
+  return api.patch<TasaImpositiva>(`/tasas-impositivas/${id}`, data);
+}
+
+/**
+ * Delete a tax rate
+ */
+export async function deleteTasaImpositiva(id: string): Promise<ApiResponse<{ ok: boolean }>> {
+  return api.delete<{ ok: boolean }>(`/tasas-impositivas/${id}`);
+}
+
+// ============================================
+// Categoria (Category) API Functions
+// ============================================
+
+/**
+ * Get all categories with optional restaurant filter
+ */
+export async function getCategorias(
+  restauranteId?: string,
+  skip: number = 0,
+  limit: number = 100
+): Promise<ApiResponse<CategoriasPublic>> {
+  const params = buildQueryString({ restaurante_id: restauranteId, skip, limit });
+  return api.get<CategoriasPublic>(`/categorias${params}`);
+}
+
+/**
+ * Get a specific category by ID
+ */
+export async function getCategoria(id: string): Promise<ApiResponse<Categoria>> {
+  return api.get<Categoria>(`/categorias/${id}`);
+}
+
+/**
+ * Create a new category
+ */
+export async function createCategoria(data: CategoriaCreate): Promise<ApiResponse<Categoria>> {
+  return api.post<Categoria>('/categorias', data);
+}
+
+/**
+ * Update a category
+ */
+export async function updateCategoria(
+  id: string,
+  data: CategoriaUpdate
+): Promise<ApiResponse<Categoria>> {
+  return api.patch<Categoria>(`/categorias/${id}`, data);
+}
+
+/**
+ * Delete a category
+ */
+export async function deleteCategoria(id: string): Promise<ApiResponse<{ ok: boolean }>> {
+  return api.delete<{ ok: boolean }>(`/categorias/${id}`);
+}
+
+// ============================================
+// Producto (Product) API Functions
+// ============================================
+
+/**
+ * Get all products with optional filters
+ */
+export async function getProductos(filters?: {
+  restauranteId?: string;
+  categoriaId?: string;
+  empresaId?: string;
+  skip?: number;
+  limit?: number;
+}): Promise<ApiResponse<ProductosPublic>> {
+  const params = buildQueryString({
+    restaurante_id: filters?.restauranteId,
+    categoria_id: filters?.categoriaId,
+    empresa_id: filters?.empresaId,
+    skip: filters?.skip ?? 0,
+    limit: filters?.limit ?? 100,
+  });
+  return api.get<ProductosPublic>(`/productos${params}`);
+}
+
+/**
+ * Get a specific product by ID
+ */
+export async function getProducto(id: string): Promise<ApiResponse<Producto>> {
+  return api.get<Producto>(`/productos/${id}`);
+}
+
+/**
+ * Create a new product
+ */
+export async function createProducto(data: ProductoCreate): Promise<ApiResponse<Producto>> {
+  return api.post<Producto>('/productos', data);
+}
+
+/**
+ * Update a product
+ */
+export async function updateProducto(
+  id: string,
+  data: ProductoUpdate
+): Promise<ApiResponse<Producto>> {
+  return api.patch<Producto>(`/productos/${id}`, data);
+}
+
+/**
+ * Update product stock
+ */
+export async function updateProductoStock(
+  id: string,
+  stock: number
+): Promise<ApiResponse<Producto>> {
+  return api.patch<Producto>(`/productos/${id}/stock`, { stock } as ProductoStockUpdate);
+}
+
+/**
+ * Delete a product
+ */
+export async function deleteProducto(id: string): Promise<ApiResponse<{ ok: boolean }>> {
+  return api.delete<{ ok: boolean }>(`/productos/${id}`);
+}
+
+// ============================================
+// Orden (Order) API Functions
+// ============================================
+
+/**
+ * Get all orders with optional filters
+ */
+export async function getOrdenes(filters?: {
+  restauranteId?: string;
+  clienteId?: string;
+  mesaId?: string;
+  estado?: EstadoOrden;
+  skip?: number;
+  limit?: number;
+}): Promise<ApiResponse<OrdenesPublic>> {
+  const params = buildQueryString({
+    restaurante_id: filters?.restauranteId,
+    cliente_id: filters?.clienteId,
+    mesa_id: filters?.mesaId,
+    estado: filters?.estado,
+    skip: filters?.skip ?? 0,
+    limit: filters?.limit ?? 100,
+  });
+  return api.get<OrdenesPublic>(`/ordenes${params}`);
+}
+
+/**
+ * Get a specific order by ID
+ */
+export async function getOrden(id: string): Promise<ApiResponse<Orden>> {
+  return api.get<Orden>(`/ordenes/${id}`);
+}
+
+/**
+ * Create a new order
+ */
+export async function createOrden(data: OrdenCreate): Promise<ApiResponse<Orden>> {
+  return api.post<Orden>('/ordenes', data);
+}
+
+/**
+ * Update an order
+ */
+export async function updateOrden(id: string, data: OrdenUpdate): Promise<ApiResponse<Orden>> {
+  return api.patch<Orden>(`/ordenes/${id}`, data);
+}
+
+/**
+ * Update order status
+ */
+export async function updateOrdenEstado(
+  id: string,
+  estado: EstadoOrden
+): Promise<ApiResponse<Orden>> {
+  return api.patch<Orden>(`/ordenes/${id}/estado`, { estado } as OrdenEstadoUpdate);
+}
+
+/**
+ * Delete an order
+ */
+export async function deleteOrden(id: string): Promise<ApiResponse<{ ok: boolean }>> {
+  return api.delete<{ ok: boolean }>(`/ordenes/${id}`);
+}
+
+// ============================================
+// OrdenItem (Order Item) API Functions
+// ============================================
+
+/**
+ * Get all order items with optional order filter
+ */
+export async function getOrdenItems(
+  ordenId?: string,
+  skip: number = 0,
+  limit: number = 100
+): Promise<ApiResponse<OrdenItemsPublic>> {
+  const params = buildQueryString({ orden_id: ordenId, skip, limit });
+  return api.get<OrdenItemsPublic>(`/orden-items${params}`);
+}
+
+/**
+ * Get a specific order item by ID
+ */
+export async function getOrdenItem(id: string): Promise<ApiResponse<OrdenItem>> {
+  return api.get<OrdenItem>(`/orden-items/${id}`);
+}
+
+/**
+ * Create a new order item (automatically reduces product stock)
+ */
+export async function createOrdenItem(data: OrdenItemCreate): Promise<ApiResponse<OrdenItem>> {
+  return api.post<OrdenItem>('/orden-items', data);
+}
+
+/**
+ * Update an order item (adjusts product stock accordingly)
+ */
+export async function updateOrdenItem(
+  id: string,
+  data: OrdenItemUpdate
+): Promise<ApiResponse<OrdenItem>> {
+  return api.patch<OrdenItem>(`/orden-items/${id}`, data);
+}
+
+/**
+ * Update order item quantity (adjusts product stock accordingly)
+ */
+export async function updateOrdenItemCantidad(
+  id: string,
+  cantidad: number
+): Promise<ApiResponse<OrdenItem>> {
+  return api.patch<OrdenItem>(`/orden-items/${id}/cantidad`, {
+    cantidad,
+  } as OrdenItemCantidadUpdate);
+}
+
+/**
+ * Delete an order item (restores product stock)
+ */
+export async function deleteOrdenItem(id: string): Promise<ApiResponse<{ ok: boolean }>> {
+  return api.delete<{ ok: boolean }>(`/orden-items/${id}`);
+}
+
+/**
+ * Delete all items for a specific order (restores product stock for all items)
+ */
+export async function deleteOrdenItemsByOrden(ordenId: string): Promise<ApiResponse<{ ok: boolean }>> {
+  return api.delete<{ ok: boolean }>(`/orden-items/orden/${ordenId}`);
+}
+
 /**
  * Example usage:
  * 
@@ -349,4 +670,30 @@ export function buildQueryString(params: Record<string, any>): string {
  * 
  * // Custom timeout
  * const { data } = await api.get('/slow-endpoint', { timeout: 60000 });
+ * 
+ * // Product & Order API examples:
+ * 
+ * // Get products filtered by restaurant
+ * const { data: products } = await getProductos({ restauranteId: '123', empresaId: '456' });
+ * 
+ * // Create a category
+ * const { data: category } = await createCategoria({
+ *   nombre: 'Bebidas',
+ *   descripcion: 'Bebidas frías y calientes',
+ *   restaurante_id: '123'
+ * });
+ * 
+ * // Update product stock
+ * const { data: product } = await updateProductoStock('prod-123', 50);
+ * 
+ * // Get pending orders
+ * const { data: orders } = await getOrdenes({ restauranteId: '123', estado: 'pendiente' });
+ * 
+ * // Create order item (stock is automatically reduced)
+ * const { data: item } = await createOrdenItem({
+ *   cantidad: 2,
+ *   precio_unitario: 10.50,
+ *   orden_id: 'order-123',
+ *   producto_id: 'prod-456'
+ * });
  */

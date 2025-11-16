@@ -6,7 +6,7 @@ from app.routes.auth.permisos import permisos, role_permisos, user_permisos
 from app.routes.company.empresa import empresa
 from app.routes.company.restaurante import restaurante
 from app.routes.company.mesarestaurante import mesarestaurante
-from app.routes.product.tasaimpositiva import routes as tasa_impositiva_routes
+from app.routes.company.tasaimpositiva import routes as tasa_impositiva_routes
 from app.routes.product.categoria import routes as categoria_routes
 from app.routes.product.producto import routes as producto_routes
 from app.routes.product.orden import routes as orden_routes
@@ -33,9 +33,9 @@ api_router.include_router(user_permisos.router)
 api_router.include_router(empresa.router)
 api_router.include_router(restaurante.router)
 api_router.include_router(mesarestaurante.router)
+api_router.include_router(tasa_impositiva_routes.router)
 
 # Rutas de gestión de productos y órdenes
-api_router.include_router(tasa_impositiva_routes.router)
 api_router.include_router(categoria_routes.router)
 api_router.include_router(producto_routes.router)
 api_router.include_router(orden_routes.router)

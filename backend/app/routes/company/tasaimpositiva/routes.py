@@ -4,10 +4,10 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import func, select
 
-from app.routes.product.tasaimpositiva import crud
+from app.routes.company.tasaimpositiva import crud
 from app.routes.deps import CurrentUser, SessionDep, require_permissions
 from app.routes.auth.permisos.permissions import PRODUCT_READ, PRODUCT_WRITE, PRODUCT_DELETE
-from backend.models.company.tasaimpositiva import (
+from models.company.tasaimpositiva import (
     TasaImpositiva,
     TasaImpositivaCreate,
     TasaImpositivaPublic,

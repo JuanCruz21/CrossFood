@@ -3,7 +3,7 @@ from typing import Any
 
 from sqlmodel import Session, select
 
-from backend.models.company.tasaimpositiva import TasaImpositiva, TasaImpositivaCreate, TasaImpositivaUpdate
+from models.company.tasaimpositiva import TasaImpositiva, TasaImpositivaCreate, TasaImpositivaUpdate
 
 
 def create_tasa_impositiva(*, session: Session, tasa_create: TasaImpositivaCreate) -> TasaImpositiva:

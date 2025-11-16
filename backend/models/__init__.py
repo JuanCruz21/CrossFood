@@ -8,8 +8,8 @@ from models.auth.permisousuario import PermisoUsuario, PermisoUsuarioCreate, Per
 from models.company.restaurante import Restaurante, RestauranteCreate, RestaurantePublic, RestauranteUpdate, RestaurantesPublic
 from models.company.empresa import Empresa, EmpresaCreate, EmpresaPublic, EmpresaUpdate, EmpresasPublic
 from models.company.mesarestaurante import MesaRestaurante, MesaRestauranteCreate, MesaRestaurantePublic, MesaRestauranteUpdate, MesaRestaurantesPublic
+from models.company.tasaimpositiva import TasaImpositiva, TasaImpositivaCreate, TasaImpositivaPublic, TasaImpositivaUpdate, TasasImpositivasPublic
 from models.product.categoria import Categoria, CategoriaCreate, CategoriaPublic, CategoriaUpdate, CategoriasPublic
-from models.product.tasaimpositiva import TasaImpositiva, TasaImpositivaCreate, TasaImpositivaPublic, TasaImpositivaUpdate, TasasImpositivasPublic
 from models.product.orden import Orden, OrdenCreate, OrdenPublic, OrdenUpdate, OrdenesPublic
 from models.product.ordenitem import OrdenItem, OrdenItemCreate, OrdenItemPublic, OrdenItemUpdate, OrdenItemsPublic
 from models.product.producto import Producto, ProductoCreate, ProductoPublic, ProductoUpdate, ProductosPublic

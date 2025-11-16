@@ -2,61 +2,145 @@
 import React from 'react';
 import { Button } from 'app/ui/buttons';
 import { Input, TextArea } from 'app/ui/input';
-import { apiRequest } from 'app/lib/api';
+import { getCategorias, createCategoria, updateCategoria, deleteCategoria } from 'app/lib/api';
 import { toast, ToastContainer } from 'react-toastify';
 import { Popup, AlertPopup, usePopup } from 'app/ui/popUp';
 import { Plus } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import type { Categoria, CategoriaCreate, CategoriaUpdate } from 'app/types/product';
+
+// TODO: Obtener restaurante_id del usuario actual o del contexto
+// Por ahora, esto debe ser configurado o pasado desde el componente padre
+const RESTAURANTE_ID = ""; // Este valor debe ser proporcionado dinámicamente
 
 export default function Categories() {
     const addCategoryPopup = usePopup();
     const editCategoryPopup = usePopup();
     const deleteCategoryPopup = usePopup();
-    const [category, setCategory] = useState<any | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<Categoria | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [categories, setCategories] = useState<any[]>([]);
-    const [data, setData] = useState<any>({
-        name: '',
-        description: '',
+    const [categories, setCategories] = useState<Categoria[]>([]);
+    const [formData, setFormData] = useState<CategoriaCreate>({
+        nombre: '',
+        descripcion: '',
+        restaurante_id: RESTAURANTE_ID,
     });
-    function fetchListCategories() {
-        // Lógica para obtener las categorías desde la API
-        apiRequest('/categories', {
-            method: 'GET',
-            useAuth: true,
-            contentType: 'application/json',
-        }).then(response => {
-            toast.success("Categorías cargadas correctamente");
-            // apiRequest likely returns an object with a `data` property; use it if present.
-            setCategories(response?.data ?? response);
-        }).catch(error => {
-            console.error('Error al obtener categorías:', error);
-            toast.error("Error al cargar categorías");
-        });
-    }
+
+    // Cargar categorías al montar el componente
     useEffect(() => {
         fetchListCategories();
     }, []);
-    
 
-    async function fetchCreateCategory(data: any) {
-        // Lógica para crear una nueva categoría
-        // Devuelve la promesa para que el llamador pueda await/handle errors
-        return apiRequest('/categories', {
-            method: 'POST',
-            useAuth: true,
-            contentType: 'application/json',
-            body: JSON.stringify(data),
-        }).then(response => {
+    // Obtener lista de categorías
+    async function fetchListCategories() {
+        try {
+            const response = await getCategorias(RESTAURANTE_ID);
+            if (response.data) {
+                setCategories(response.data.data || []);
+            }
+        } catch (error) {
+            console.error('Error al obtener categorías:', error);
+            toast.error("Error al cargar categorías");
+        }
+    }
+
+    // Crear nueva categoría
+    async function handleCreateCategory() {
+        setIsLoading(true);
+        try {
+            await createCategoria(formData);
             toast.success("Categoría creada correctamente");
-            fetchListCategories(); // Refrescar la lista de categorías
-            return response;
-        }).catch(error => {
+            await fetchListCategories();
+            addCategoryPopup.close();
+            resetForm();
+        } catch (error) {
             console.error('Error al crear categoría:', error);
-            // Re-lanzar para que el llamador pueda manejarlo si usa await
             toast.error("Error al crear categoría");
-            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    // Actualizar categoría existente
+    async function handleUpdateCategory() {
+        if (!selectedCategory) return;
+        
+        setIsLoading(true);
+        try {
+            const updateData: CategoriaUpdate = {
+                nombre: formData.nombre,
+                descripcion: formData.descripcion,
+            };
+            
+            await updateCategoria(selectedCategory.id, updateData);
+            toast.success("Categoría actualizada correctamente");
+            await fetchListCategories();
+            editCategoryPopup.close();
+            resetForm();
+        } catch (error) {
+            console.error('Error al actualizar categoría:', error);
+            toast.error("Error al actualizar categoría");
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    // Eliminar categoría
+    async function handleDeleteCategory() {
+        if (!selectedCategory) return;
+        
+        setIsLoading(true);
+        try {
+            await deleteCategoria(selectedCategory.id);
+            toast.success("Categoría eliminada correctamente");
+            await fetchListCategories();
+            deleteCategoryPopup.close();
+            setSelectedCategory(null);
+        } catch (error) {
+            console.error('Error al eliminar categoría:', error);
+            toast.error("Error al eliminar categoría");
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    // Abrir modal de edición
+    function openEditModal(category: Categoria) {
+        setSelectedCategory(category);
+        setFormData({
+            nombre: category.nombre,
+            descripcion: category.descripcion || '',
+            restaurante_id: category.restaurante_id,
         });
+        editCategoryPopup.open();
+    }
+
+    // Abrir modal de eliminación
+    function openDeleteModal(category: Categoria) {
+        setSelectedCategory(category);
+        deleteCategoryPopup.open();
+    }
+
+    // Resetear formulario
+    function resetForm() {
+        setFormData({
+            nombre: '',
+            descripcion: '',
+            restaurante_id: RESTAURANTE_ID,
+        });
+        setSelectedCategory(null);
+    }
+
+    // Manejar cierre de modal de agregar
+    function handleCloseAddModal() {
+        addCategoryPopup.close();
+        resetForm();
+    }
+
+    // Manejar cierre de modal de editar
+    function handleCloseEditModal() {
+        editCategoryPopup.close();
+        resetForm();
     }
     return (
         <>
@@ -86,17 +170,17 @@ export default function Categories() {
                                 {categories && categories.length > 0 ? (
                                     categories.map((cat) => (
                                         <tr key={cat.id} className="hover:bg-[var(--muted)]/50 transition-colors">
-                                            <td className="px-6 py-4 text-sm font-medium text-[var(--foreground)]">{cat.name}</td>
-                                            <td className="px-6 py-4 text-sm text-[var(--muted-foreground)]">{cat.description}</td>
+                                            <td className="px-6 py-4 text-sm font-medium text-[var(--foreground)]">{cat.nombre}</td>
+                                            <td className="px-6 py-4 text-sm text-[var(--muted-foreground)]">{cat.descripcion || '-'}</td>
                                             <td className="px-6 py-4 text-sm font-medium">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Button
                                                         variant="ghost"
-                                                        onClick={() => { setCategory(cat); editCategoryPopup.open(); }}
+                                                        onClick={() => openEditModal(cat)}
                                                     >Editar</Button>
                                                     <Button
                                                         variant="outline"
-                                                        onClick={() => { setCategory(cat); deleteCategoryPopup.open(); }}
+                                                        onClick={() => openDeleteModal(cat)}
                                                     >Eliminar</Button>
                                                 </div>
                                             </td>
@@ -114,47 +198,90 @@ export default function Categories() {
                     </div>
                 </div>
             </div>
-            {/* Modal content for adding/editing a category */}
+
+            {/* Modal para agregar categoría */}
             <Popup 
                 isOpen={addCategoryPopup.isOpen}
-                onClose={addCategoryPopup.close}
-                title={`Nueva Categoría`}
+                onClose={handleCloseAddModal}
+                title="Nueva Categoría"
                 description="Crea una nueva categoría para el menú"
-                onConfirm={async () => {
-                setIsLoading(true);
-                try {
-                    await fetchCreateCategory(data);
-                    addCategoryPopup.close();
-                } catch (err) {
-                    // el error ya fue mostrado por fetchCreateCategory; opcionalmente loguearlo
-                    console.error('Error creating category (onConfirm):', err);
-                } finally {
-                    setIsLoading(false);
-                }
-                }}
-                confirmText="Guardar Cambios"
+                onConfirm={handleCreateCategory}
+                confirmText="Crear Categoría"
                 isLoading={isLoading}
                 size="xl"
             >
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleCreateCategory(); }}>
                     <div>
                         <Input 
                             id="categoryName"
                             label="Nombre de la Categoría"  
                             placeholder="Ingresa el nombre de la categoría" 
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData({ ...data, name: e.target.value })}
-                            value={data.name}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                                setFormData({ ...formData, nombre: e.target.value })
+                            }
+                            value={formData.nombre}
+                            required
                         />
                         <TextArea 
                             id="categoryDescription"
                             label="Descripción"
-                            placeholder="Ingresa una descripción"
-                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setData({ ...data, description: e.target.value })}
-                            value={data.description} 
+                            placeholder="Ingresa una descripción (opcional)"
+                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => 
+                                setFormData({ ...formData, descripcion: e.target.value })
+                            }
+                            value={formData.descripcion} 
                         />
                     </div>
                 </form>
             </Popup>
+
+            {/* Modal para editar categoría */}
+            <Popup 
+                isOpen={editCategoryPopup.isOpen}
+                onClose={handleCloseEditModal}
+                title="Editar Categoría"
+                description="Modifica los datos de la categoría"
+                onConfirm={handleUpdateCategory}
+                confirmText="Guardar Cambios"
+                isLoading={isLoading}
+                size="xl"
+            >
+                <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleUpdateCategory(); }}>
+                    <div>
+                        <Input 
+                            id="editCategoryName"
+                            label="Nombre de la Categoría"  
+                            placeholder="Ingresa el nombre de la categoría" 
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                                setFormData({ ...formData, nombre: e.target.value })
+                            }
+                            value={formData.nombre}
+                            required
+                        />
+                        <TextArea 
+                            id="editCategoryDescription"
+                            label="Descripción"
+                            placeholder="Ingresa una descripción (opcional)"
+                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => 
+                                setFormData({ ...formData, descripcion: e.target.value })
+                            }
+                            value={formData.descripcion} 
+                        />
+                    </div>
+                </form>
+            </Popup>
+
+            {/* Modal de confirmación para eliminar */}
+            <AlertPopup
+                isOpen={deleteCategoryPopup.isOpen}
+                onClose={deleteCategoryPopup.close}
+                onConfirm={handleDeleteCategory}
+                title="Eliminar Categoría"
+                message={`¿Estás seguro de que deseas eliminar la categoría "${selectedCategory?.nombre}"? Esta acción no se puede deshacer.`}
+                confirmText="Eliminar"
+                cancelText="Cancelar"
+                type="error"
+            />
             {/* Toast container - react-toastify */}
             <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
         </>
