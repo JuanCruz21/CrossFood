@@ -40,18 +40,21 @@ export interface Categoria {
   nombre: string;
   descripcion?: string;
   restaurante_id: string;
+  categoria_id?: string;
 }
 
 export interface CategoriaCreate {
   nombre: string;
   descripcion?: string;
   restaurante_id: string;
+  categoria_id?: string;
 }
 
 export interface CategoriaUpdate {
   nombre?: string;
   descripcion?: string;
   restaurante_id?: string;
+  categoria_id?: string;
 }
 
 export interface CategoriasPublic {

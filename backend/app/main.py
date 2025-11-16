@@ -45,3 +45,12 @@ if origins:
     )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+# Servir archivos estáticos (imágenes)
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
+
+uploads_dir = Path(__file__).parent.parent / "uploads"
+uploads_dir.mkdir(exist_ok=True)
+
+app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")

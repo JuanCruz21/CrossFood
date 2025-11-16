@@ -2,39 +2,44 @@
 import React from 'react';
 import { Button } from 'app/ui/buttons';
 import { Input, TextArea } from 'app/ui/input';
-import { getCategorias, createCategoria, updateCategoria, deleteCategoria } from 'app/lib/api';
+import { Select } from 'app/ui/select';
+import { getCategorias, createCategoria, updateCategoria, deleteCategoria, api, getRestaurantesByEmpresa } from 'app/lib/api';
 import { toast, ToastContainer } from 'react-toastify';
 import { Popup, AlertPopup, usePopup } from 'app/ui/popUp';
 import { Plus } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import type { Categoria, CategoriaCreate, CategoriaUpdate } from 'app/types/product';
 
-// TODO: Obtener restaurante_id del usuario actual o del contexto
-// Por ahora, esto debe ser configurado o pasado desde el componente padre
-const RESTAURANTE_ID = ""; // Este valor debe ser proporcionado dinámicamente
+// Valores dinámicos: se obtendrán desde el usuario actual o selector
 
 export default function Categories() {
     const addCategoryPopup = usePopup();
     const editCategoryPopup = usePopup();
     const deleteCategoryPopup = usePopup();
     const [selectedCategory, setSelectedCategory] = useState<Categoria | null>(null);
+    const [restaurantes, setRestaurantes] = useState<any[]>([]); 
+    const [empresaId, setEmpresaId] = useState<string>('');
+    const [restauranteId, setRestauranteId] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
     const [categories, setCategories] = useState<Categoria[]>([]);
     const [formData, setFormData] = useState<CategoriaCreate>({
         nombre: '',
         descripcion: '',
-        restaurante_id: RESTAURANTE_ID,
+        restaurante_id: '',
+        categoria_id: '',
     });
 
-    // Cargar categorías al montar el componente
+    // Cargar categorías al montar el componente: obtener primero info de usuario
     useEffect(() => {
-        fetchListCategories();
+        (async () => {
+            await handleGetUserInfo();
+        })();
     }, []);
 
     // Obtener lista de categorías
     async function fetchListCategories() {
         try {
-            const response = await getCategorias(RESTAURANTE_ID);
+            const response = await getCategorias(restauranteId);
             if (response.data) {
                 setCategories(response.data.data || []);
             }
@@ -48,7 +53,11 @@ export default function Categories() {
     async function handleCreateCategory() {
         setIsLoading(true);
         try {
-            await createCategoria(formData);
+            const payload: any = { ...formData };
+            Object.keys(payload).forEach((k) => {
+                if (payload[k] === '') delete payload[k];
+            });
+            await createCategoria(payload);
             toast.success("Categoría creada correctamente");
             await fetchListCategories();
             addCategoryPopup.close();
@@ -60,7 +69,34 @@ export default function Categories() {
             setIsLoading(false);
         }
     }
+    // Obtener información del usuario (si es necesario)
+    async function handleGetUserInfo() {
+        const response = await api.post('/login/test-token');
+        if (response.data) {
+            const empId = response.data.empresa_id || '';
+            const restId = response.data.restaurante_id || '';
+            setEmpresaId(empId);
+            setRestauranteId(restId);
+            setFormData((prev) => ({ ...prev, restaurante_id: restId }));
+            await fetchGetRestaurantes(empId);
+            await fetchListCategories();
+        }
+        return null;
+    }
 
+    // Obtener lista de restaurantes por empresa
+    async function fetchGetRestaurantes(empresa_id?: string) {
+        try {
+            const idToUse = empresa_id ?? empresaId;
+            if (!idToUse) return setRestaurantes([]);
+            const response = await getRestaurantesByEmpresa(idToUse);
+            if (response.data) {
+                setRestaurantes(response.data.data || []);
+            }
+        } catch (error) {
+            console.error('Error al obtener restaurantes:', error);
+        }
+    }
     // Actualizar categoría existente
     async function handleUpdateCategory() {
         if (!selectedCategory) return;
@@ -71,8 +107,11 @@ export default function Categories() {
                 nombre: formData.nombre,
                 descripcion: formData.descripcion,
             };
-            
-            await updateCategoria(selectedCategory.id, updateData);
+            const payload: any = { ...updateData };
+            Object.keys(payload).forEach((k) => {
+                if (payload[k] === '') delete payload[k];
+            });
+            await updateCategoria(selectedCategory.id, payload);
             toast.success("Categoría actualizada correctamente");
             await fetchListCategories();
             editCategoryPopup.close();
@@ -111,6 +150,7 @@ export default function Categories() {
             nombre: category.nombre,
             descripcion: category.descripcion || '',
             restaurante_id: category.restaurante_id,
+            categoria_id: category.categoria_id,
         });
         editCategoryPopup.open();
     }
@@ -126,7 +166,8 @@ export default function Categories() {
         setFormData({
             nombre: '',
             descripcion: '',
-            restaurante_id: RESTAURANTE_ID,
+            restaurante_id: restauranteId,
+            categoria_id: '',
         });
         setSelectedCategory(null);
     }
@@ -231,6 +272,32 @@ export default function Categories() {
                             }
                             value={formData.descripcion} 
                         />
+                        <Select
+                            id="editCategoryParent"
+                            label="Categoría Padre"
+                            options={[
+                                { value: '', label: 'Ninguna' },
+                                ...categories
+                                    .filter(cat => cat.id !== selectedCategory?.id) // Excluir la categoría actual
+                                    .map(cat => ({ value: cat.id, label: cat.nombre }))
+                            ]}
+                            value={formData.categoria_id || ''}
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                                setFormData({ ...formData, categoria_id: e.target.value })
+                            }
+                        />
+                        <Select
+                            id="editCategoryRestaurant"
+                            label="Restaurante"
+                            options={[
+                                { value: '', label: 'Ninguno' },
+                                ...restaurantes.map(r => ({ value: r.id, label: r.nombre }))
+                            ]}
+                            value={formData.restaurante_id || ''}
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                                setFormData({ ...formData, restaurante_id: e.target.value })
+                            }
+                        />
                     </div>
                 </form>
             </Popup>
@@ -266,6 +333,32 @@ export default function Categories() {
                                 setFormData({ ...formData, descripcion: e.target.value })
                             }
                             value={formData.descripcion} 
+                        />
+                        <Select
+                            id="editCategoryParent"
+                            label="Categoría Padre"
+                            options={[
+                                { value: '', label: 'Ninguna' },
+                                ...categories
+                                    .filter(cat => cat.id !== selectedCategory?.id) // Excluir la categoría actual
+                                    .map(cat => ({ value: cat.id, label: cat.nombre }))
+                            ]}
+                            value={formData.categoria_id || ''}
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                                setFormData({ ...formData, categoria_id: e.target.value })
+                            }
+                        />
+                        <Select
+                            id="editCategoryRestaurant"
+                            label="Restaurante"
+                            options={[
+                                { value: '', label: 'Ninguno' },
+                                ...restaurantes.map(r => ({ value: r.id, label: r.nombre }))
+                            ]}
+                            value={formData.restaurante_id || ''}
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                                setFormData({ ...formData, restaurante_id: e.target.value })
+                            }
                         />
                     </div>
                 </form>

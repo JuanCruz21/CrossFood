@@ -8,7 +8,9 @@ import {
     updateProducto, 
     deleteProducto,
     updateProductoStock,
-    getCategorias 
+    getCategorias,
+    getTasasImpositivas,
+    api
 } from 'app/lib/api';
 import { toast, ToastContainer } from 'react-toastify';
 import { Popup, AlertPopup, usePopup } from 'app/ui/popUp';
@@ -29,7 +31,11 @@ export default function Products() {
     const [isLoading, setIsLoading] = useState(false);
     const [products, setProducts] = useState<Producto[]>([]);
     const [categories, setCategories] = useState<Categoria[]>([]);
+    const [tasas, setTasas] = useState<any[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string>('');
+    const [empresaId, setEmpresaId] = useState<string>(EMPRESA_ID);
     
     const [formData, setFormData] = useState<ProductoCreate>({
         nombre: '',
@@ -40,7 +46,7 @@ export default function Products() {
         categoria_id: '',
         restaurante_id: RESTAURANTE_ID,
         empresa_id: EMPRESA_ID,
-        tasa_impositiva_id: undefined,
+        tasa_impositiva_id: '',
     });
     
     const [stockUpdate, setStockUpdate] = useState<number>(0);
@@ -49,7 +55,19 @@ export default function Products() {
     useEffect(() => {
         fetchProducts();
         fetchCategories();
+        fetchTasas();
     }, []);
+
+    async function handleGetUserInfo() {
+        const response = await api.post('/login/test-token');
+        if (response.data) {
+            const empId = response.data.empresa_id || '';
+            const restId = response.data.restaurante_id || '';
+            setEmpresaId(empId);
+            setFormData((prev) => ({ ...prev, restaurante_id: restId }));
+        }
+        return null;
+    }
 
     // Recargar productos cuando cambia el filtro de categoría
     useEffect(() => {
@@ -86,11 +104,62 @@ export default function Products() {
         }
     }
 
+    async function fetchTasas() {
+        try {
+            const response = await getTasasImpositivas();
+            if (response.data) {
+                setTasas(response.data.data || []);
+            }
+        } catch (error) {
+            console.error('Error al obtener tasas impositivas:', error);
+        }
+    }
+
+    // Subir imagen con empresa_id
+    async function uploadImage(file: File, empresaId: string): Promise<string> {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+        const formDataUpload = new FormData();
+        formDataUpload.append('file', file);
+        formDataUpload.append('empresa_id', empresaId);
+        
+        const response = await fetch(`${API_URL}/upload/producto`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken') || sessionStorage.getItem('authToken')}`
+            },
+            body: formDataUpload,
+        });
+        
+        if (!response.ok) {
+            throw new Error('Error al subir imagen');
+        }
+        
+        const data = await response.json();
+        return data.url;
+    }
+
     // Crear nuevo producto
     async function handleCreateProduct() {
         setIsLoading(true);
         try {
-            await createProducto(formData);
+            let imageUrl = formData.imagen;
+            
+            // Si hay archivo de imagen, subirlo primero
+            if (imageFile) {
+                if (!formData.empresa_id) {
+                    toast.error("Debe seleccionar una empresa antes de subir una imagen");
+                    setIsLoading(false);
+                    return;
+                }
+                imageUrl = await uploadImage(imageFile, formData.empresa_id);
+            }
+            
+            // sanitize payload: remove empty string fields so backend receives null/omitted
+            const payload = { ...formData, imagen: imageUrl } as any;
+            Object.keys(payload).forEach((k) => {
+                if (payload[k] === '') delete payload[k];
+            });
+            await createProducto(payload);
             toast.success("Producto creado correctamente");
             await fetchProducts();
             addProductPopup.close();
@@ -109,16 +178,32 @@ export default function Products() {
         
         setIsLoading(true);
         try {
-            const updateData: ProductoUpdate = {
+            let imageUrl = formData.imagen;
+            
+            // Si hay nuevo archivo de imagen, subirlo
+            if (imageFile) {
+                const empresaId = formData.empresa_id || selectedProduct.empresa_id;
+                if (!empresaId) {
+                    toast.error("No se pudo determinar la empresa del producto");
+                    setIsLoading(false);
+                    return;
+                }
+                imageUrl = await uploadImage(imageFile, empresaId);
+            }
+            
+            const updateData: any = {
                 nombre: formData.nombre,
                 descripcion: formData.descripcion,
                 precio: formData.precio,
                 stock: formData.stock,
-                imagen: formData.imagen,
+                imagen: imageUrl,
                 categoria_id: formData.categoria_id,
                 tasa_impositiva_id: formData.tasa_impositiva_id,
             };
-            
+            Object.keys(updateData).forEach((k) => {
+                if (updateData[k] === '') delete updateData[k];
+            });
+
             await updateProducto(selectedProduct.id, updateData);
             toast.success("Producto actualizado correctamente");
             await fetchProducts();
@@ -184,6 +269,8 @@ export default function Products() {
             empresa_id: product.empresa_id,
             tasa_impositiva_id: product.tasa_impositiva_id,
         });
+        setImageFile(null);
+        setImagePreview('');
         editProductPopup.open();
     }
 
@@ -200,6 +287,19 @@ export default function Products() {
         stockPopup.open();
     }
 
+    // Manejar selección de imagen
+    function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if (file) {
+            setImageFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
     // Resetear formulario
     function resetForm() {
         setFormData({
@@ -214,6 +314,8 @@ export default function Products() {
             tasa_impositiva_id: undefined,
         });
         setSelectedProduct(null);
+        setImageFile(null);
+        setImagePreview('');
     }
 
     return (
@@ -275,7 +377,7 @@ export default function Products() {
                                                 <div className="flex items-center gap-3">
                                                     {product.imagen ? (
                                                         <img 
-                                                            src={product.imagen} 
+                                                            src={product.imagen.startsWith('http') ? product.imagen : `http://localhost:8000${product.imagen}`}
                                                             alt={product.nombre}
                                                             className="w-10 h-10 rounded-lg object-cover"
                                                         />
@@ -439,14 +541,43 @@ export default function Products() {
                         </select>
                     </div>
 
-                    <Input
-                        id="productImage"
-                        label="URL de la Imagen"
-                        type="url"
-                        placeholder="https://ejemplo.com/imagen.jpg (opcional)"
-                        value={formData.imagen}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, imagen: e.target.value })}
-                    />
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-[var(--foreground)]">
+                            Imagen del Producto
+                        </label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                        />
+                        {imagePreview && (
+                            <div className="mt-2">
+                                <img 
+                                    src={imagePreview} 
+                                    alt="Preview" 
+                                    className="w-32 h-32 object-cover rounded-lg"
+                                />
+                            </div>
+                        )}
+                    </div>
+                    <div className="space-y-2">
+                        <label htmlFor="productTax" className="block text-sm font-medium text-[var(--foreground)]">
+                            Tasa Impositiva *
+                        </label>
+                        <select
+                            id="productTax"
+                            value={formData.tasa_impositiva_id || ''}
+                            onChange={(e) => setFormData({ ...formData, tasa_impositiva_id: e.target.value })}
+                            className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                            required
+                        >
+                            <option value="">Selecciona una tasa</option>
+                            {tasas.map((t) => (
+                                <option key={t.id} value={t.id}>{t.nombre} ({t.porcentaje}%)</option>
+                            ))}
+                        </select>
+                    </div>
                 </form>
             </Popup>
 
@@ -524,14 +655,52 @@ export default function Products() {
                         </select>
                     </div>
 
-                    <Input
-                        id="editProductImage"
-                        label="URL de la Imagen"
-                        type="url"
-                        placeholder="https://ejemplo.com/imagen.jpg (opcional)"
-                        value={formData.imagen}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, imagen: e.target.value })}
-                    />
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-[var(--foreground)]">
+                            Imagen del Producto
+                        </label>
+                        {formData.imagen && !imagePreview && (
+                            <div className="mb-2">
+                                <img 
+                                    src={formData.imagen.startsWith('http') ? formData.imagen : `http://localhost:8000${formData.imagen}`}
+                                    alt="Imagen actual" 
+                                    className="w-32 h-32 object-cover rounded-lg"
+                                />
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                        />
+                        {imagePreview && (
+                            <div className="mt-2">
+                                <img 
+                                    src={imagePreview} 
+                                    alt="Preview" 
+                                    className="w-32 h-32 object-cover rounded-lg"
+                                />
+                            </div>
+                        )}
+                    </div>
+                    <div className="space-y-2">
+                        <label htmlFor="editProductTax" className="block text-sm font-medium text-[var(--foreground)]">
+                            Tasa Impositiva *
+                        </label>
+                        <select
+                            id="editProductTax"
+                            value={formData.tasa_impositiva_id || ''}
+                            onChange={(e) => setFormData({ ...formData, tasa_impositiva_id: e.target.value })}
+                            className="w-full px-3 py-2 bg-[var(--background)] border border-[var(--border)] rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                            required
+                        >
+                            <option value="">Selecciona una tasa</option>
+                            {tasas.map((t) => (
+                                <option key={t.id} value={t.id}>{t.nombre} ({t.porcentaje}%)</option>
+                            ))}
+                        </select>
+                    </div>
                 </form>
             </Popup>
 

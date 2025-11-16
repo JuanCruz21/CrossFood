@@ -356,6 +356,12 @@ import type {
   OrdenItemCantidadUpdate,
   EstadoOrden,
 } from '../types/product';
+import type {
+  Restaurante,
+  RestaurantesPublic,
+  Empresa,
+  EmpresasPublic,
+} from '../types/company';
 
 // ============================================
 // Tasa Impositiva (Tax Rate) API Functions
@@ -450,6 +456,40 @@ export async function updateCategoria(
  */
 export async function deleteCategoria(id: string): Promise<ApiResponse<{ ok: boolean }>> {
   return api.delete<{ ok: boolean }>(`/categorias/${id}`);
+}
+
+// ============================================
+// Empresa & Restaurante API Functions
+// ============================================
+
+/**
+ * Get all restaurantes (respecting user permissions)
+ */
+export async function getRestaurantes(
+  skip: number = 0,
+  limit: number = 100
+): Promise<ApiResponse<RestaurantesPublic>> {
+  const params = buildQueryString({ skip, limit });
+  return api.get<RestaurantesPublic>(`/restaurantes${params}`);
+}
+
+/**
+ * Get all restaurantes by empresa
+ */
+export async function getRestaurantesByEmpresa(
+  empresaId: string,
+  skip: number = 0,
+  limit: number = 100
+): Promise<ApiResponse<RestaurantesPublic>> {
+  const params = buildQueryString({ skip, limit });
+  return api.get<RestaurantesPublic>(`/restaurantes/empresa/${empresaId}${params}`);
+}
+
+/**
+ * Get a specific restaurante by ID
+ */
+export async function getRestaurante(id: string): Promise<ApiResponse<Restaurante>> {
+  return api.get<Restaurante>(`/restaurantes/${id}`);
 }
 
 // ============================================

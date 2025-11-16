@@ -11,6 +11,7 @@ from app.routes.product.categoria import routes as categoria_routes
 from app.routes.product.producto import routes as producto_routes
 from app.routes.product.orden import routes as orden_routes
 from app.routes.product.ordenitem import routes as ordenitem_routes
+from app.routes import upload
 from core.config import settings
 
 api_router = APIRouter()
@@ -40,6 +41,9 @@ api_router.include_router(categoria_routes.router)
 api_router.include_router(producto_routes.router)
 api_router.include_router(orden_routes.router)
 api_router.include_router(ordenitem_routes.router)
+
+# Rutas de upload
+api_router.include_router(upload.router)
 
 if settings.ENVIRONMENT == "local":
     api_router.include_router(private.router)

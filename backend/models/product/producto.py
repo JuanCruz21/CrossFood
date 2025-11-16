@@ -1,5 +1,6 @@
 import uuid
 from sqlmodel import Field, SQLModel
+from pydantic import field_validator
 
 class ProductoBase(SQLModel):
     nombre: str = Field(index=True, unique=True)
@@ -7,10 +8,22 @@ class ProductoBase(SQLModel):
     precio: float
     stock: int
     imagen: str | None = None
-    empresa_id: uuid.UUID = Field(foreign_key="empresa.id")
+    empresa_id: uuid.UUID | None = Field(default=None, foreign_key="empresa.id")
     tasa_impositiva_id: uuid.UUID = Field(foreign_key="tasaimpositiva.id")
-    restaurante_id: uuid.UUID  = Field(foreign_key="restaurante.id")
+    restaurante_id: uuid.UUID | None = Field(default=None, foreign_key="restaurante.id")
     categoria_id: uuid.UUID = Field(foreign_key="categoria.id")
+
+    @field_validator("empresa_id", mode="before")
+    def _empty_empresa_id_to_none(cls, v):
+        if v == "":
+            return None
+        return v
+
+    @field_validator("restaurante_id", mode="before")
+    def _empty_restaurante_id_to_none(cls, v):
+        if v == "":
+            return None
+        return v
 
 class ProductoCreate(ProductoBase):
     pass
@@ -21,6 +34,8 @@ class ProductoUpdate(SQLModel):
     precio: float
     stock: int
     empresa_id: uuid.UUID | None = None
+    restaurante_id: uuid.UUID | None = None
+    tasa_impositiva_id: uuid.UUID | None = None
     categoria_id: uuid.UUID | None = None
 
 class Producto(ProductoBase, table=True):

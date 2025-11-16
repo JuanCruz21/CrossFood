@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import func, select
 
 from app.routes.product.categoria import crud
-from app.routes.deps import SessionDep, require_permissions
-from app.routes.auth.permisos.permissions import PRODUCT_READ, PRODUCT_WRITE, PRODUCT_DELETE
+from app.routes.deps import SessionDep, require_permissions, CurrentUser
+from app.routes.auth.permisos.permissions import CATEGORIA_DELETE, CATEGORIA_READ, CATEGORIA_WRITE
 from models.product.categoria import (
     Categoria,
     CategoriaCreate,
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/categorias", tags=["categorias"])
 
 @router.get(
     "/",
-    dependencies=[Depends(require_permissions(PRODUCT_READ))],
+    dependencies=[Depends(require_permissions(CATEGORIA_READ))],
     response_model=CategoriasPublic,
 )
 def read_categorias(
@@ -34,7 +34,7 @@ def read_categorias(
     Obtener categorías con paginación.
     - Si se proporciona restaurante_id, filtra por restaurante
     - Si no se proporciona, devuelve todas las categorías
-    Requiere permiso: PRODUCT_READ
+    Requiere permiso: CATEGORIA_READ
     """
     if restaurante_id:
         categorias = crud.get_categorias_by_restaurante(
@@ -58,24 +58,26 @@ def read_categorias(
 
 @router.post(
     "/",
-    dependencies=[Depends(require_permissions(PRODUCT_WRITE))],
+    dependencies=[Depends(require_permissions(CATEGORIA_WRITE))],
     response_model=CategoriaPublic,
+    status_code=201,
 )
 def create_categoria(
     *, 
     session: SessionDep, 
+    current_user: CurrentUser,
     categoria_in: CategoriaCreate
 ) -> Any:
     """
     Crear una nueva categoría.
     Verifica que no exista una categoría con el mismo nombre en el restaurante.
-    Requiere permiso: PRODUCT_WRITE
+    Requiere permiso: CATEGORIA_WRITE
     """
     # Verificar que no exista una categoría con el mismo nombre en el restaurante
     categoria = crud.get_categoria_by_nombre(
         session=session, 
         nombre=categoria_in.nombre,
-        restaurante_id=categoria_in.restaurante_id
+        restaurante_id=current_user.restaurante_id
     )
     if categoria:
         raise HTTPException(
@@ -89,7 +91,7 @@ def create_categoria(
 
 @router.get(
     "/{categoria_id}",
-    dependencies=[Depends(require_permissions(PRODUCT_READ))],
+    dependencies=[Depends(require_permissions(CATEGORIA_READ))],
     response_model=CategoriaPublic,
 )
 def read_categoria_by_id(
@@ -98,7 +100,7 @@ def read_categoria_by_id(
 ) -> Any:
     """
     Obtener una categoría por su ID.
-    Requiere permiso: PRODUCT_READ
+    Requiere permiso: CATEGORIA_READ
     """
     categoria = crud.get_categoria_by_id(session=session, categoria_id=categoria_id)
     if not categoria:
@@ -112,7 +114,7 @@ def read_categoria_by_id(
 
 @router.patch(
     "/{categoria_id}",
-    dependencies=[Depends(require_permissions(PRODUCT_WRITE))],
+    dependencies=[Depends(require_permissions(CATEGORIA_WRITE))],
     response_model=CategoriaPublic,
 )
 def update_categoria(
@@ -123,7 +125,7 @@ def update_categoria(
 ) -> Any:
     """
     Actualizar una categoría.
-    Requiere permiso: PRODUCT_WRITE
+    Requiere permiso: CATEGORIA_WRITE
     """
     categoria = crud.get_categoria_by_id(session=session, categoria_id=categoria_id)
     if not categoria:
@@ -151,7 +153,7 @@ def update_categoria(
 
 @router.delete(
     "/{categoria_id}",
-    dependencies=[Depends(require_permissions(PRODUCT_DELETE))],
+    dependencies=[Depends(require_permissions(CATEGORIA_DELETE))],
     response_model=Message,
 )
 def delete_categoria(
@@ -160,7 +162,7 @@ def delete_categoria(
 ) -> Any:
     """
     Eliminar una categoría.
-    Requiere permiso: PRODUCT_DELETE
+    Requiere permiso: CATEGORIA_DELETE
     """
     success = crud.delete_categoria(session=session, categoria_id=categoria_id)
     if not success:
