@@ -15,7 +15,7 @@ import {
 import { toast, ToastContainer } from 'react-toastify';
 import { Popup, AlertPopup, usePopup } from 'app/ui/popUp';
 import { Plus, Package, Edit, Trash2 } from 'lucide-react';
-import type { Producto, ProductoCreate, ProductoUpdate, Categoria } from 'app/types/product';
+import type { Producto, ProductoCreate, ProductoUpdate, Categoria, TasaImpositiva } from 'app/types/product';
 
 // TODO: Obtener de contexto o usuario actual
 const RESTAURANTE_ID = "";
@@ -31,7 +31,7 @@ export default function Products() {
     const [isLoading, setIsLoading] = useState(false);
     const [products, setProducts] = useState<Producto[]>([]);
     const [categories, setCategories] = useState<Categoria[]>([]);
-    const [tasas, setTasas] = useState<any[]>([]);
+    const [tasas, setTasas] = useState<TasaImpositiva[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>('');
@@ -157,15 +157,15 @@ export default function Products() {
             }
             
             // sanitize payload: remove empty string fields so backend receives null/omitted
-            const payload = { 
+            const payload: Partial<ProductoCreate> & { [key: string]: unknown } = { 
                 ...formData, 
                 imagen: imageUrl,
                 empresa_id: formData.empresa_id || empresaId 
-            } as any;
+            };
             Object.keys(payload).forEach((k) => {
                 if (payload[k] === '') delete payload[k];
             });
-            await createProducto(payload);
+            await createProducto(payload as ProductoCreate);
             toast.success("Producto creado correctamente");
             await fetchProducts();
             addProductPopup.close();
@@ -197,7 +197,7 @@ export default function Products() {
                 imageUrl = await uploadImage(imageFile, empresaIdToUse);
             }
             
-            const updateData: any = {
+            const updateData: Partial<ProductoUpdate> & { [key: string]: unknown } = {
                 nombre: formData.nombre,
                 descripcion: formData.descripcion,
                 precio: formData.precio,
@@ -210,7 +210,7 @@ export default function Products() {
                 if (updateData[k] === '') delete updateData[k];
             });
 
-            await updateProducto(selectedProduct.id, updateData);
+            await updateProducto(selectedProduct.id, updateData as ProductoUpdate);
             toast.success("Producto actualizado correctamente");
             await fetchProducts();
             editProductPopup.close();

@@ -10,6 +10,11 @@ import { Plus } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import type { Categoria, CategoriaCreate, CategoriaUpdate } from 'app/types/product';
 
+interface Restaurante {
+    id: string;
+    nombre: string;
+}
+
 // Valores dinámicos: se obtendrán desde el usuario actual o selector
 
 export default function Categories() {
@@ -17,7 +22,7 @@ export default function Categories() {
     const editCategoryPopup = usePopup();
     const deleteCategoryPopup = usePopup();
     const [selectedCategory, setSelectedCategory] = useState<Categoria | null>(null);
-    const [restaurantes, setRestaurantes] = useState<any[]>([]); 
+    const [restaurantes, setRestaurantes] = useState<Restaurante[]>([]); 
     const [empresaId, setEmpresaId] = useState<string>('');
     const [restauranteId, setRestauranteId] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
@@ -53,11 +58,11 @@ export default function Categories() {
     async function handleCreateCategory() {
         setIsLoading(true);
         try {
-            const payload: any = { ...formData };
+            const payload: Partial<CategoriaCreate> & { [key: string]: unknown } = { ...formData };
             Object.keys(payload).forEach((k) => {
                 if (payload[k] === '') delete payload[k];
             });
-            await createCategoria(payload);
+            await createCategoria(payload as CategoriaCreate);
             toast.success("Categoría creada correctamente");
             await fetchListCategories();
             addCategoryPopup.close();
@@ -107,11 +112,11 @@ export default function Categories() {
                 nombre: formData.nombre,
                 descripcion: formData.descripcion,
             };
-            const payload: any = { ...updateData };
+            const payload: Partial<CategoriaUpdate> & { [key: string]: unknown } = { ...updateData };
             Object.keys(payload).forEach((k) => {
                 if (payload[k] === '') delete payload[k];
             });
-            await updateCategoria(selectedCategory.id, payload);
+            await updateCategoria(selectedCategory.id, payload as CategoriaUpdate);
             toast.success("Categoría actualizada correctamente");
             await fetchListCategories();
             editCategoryPopup.close();

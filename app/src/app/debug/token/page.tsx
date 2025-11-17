@@ -139,7 +139,7 @@ export default function TokenDebugPage() {
             <li>Primero haz login en <code className="bg-yellow-100 px-1 rounded">/auth/login</code></li>
             <li>Luego vuelve a esta página</li>
             <li>Verifica que el token aparezca en localStorage</li>
-            <li>Haz clic en "Probar API" para verificar que funcione</li>
+            <li>Haz clic en &quot;Probar API&quot; para verificar que funcione</li>
           </ol>
         </div>
       </div>

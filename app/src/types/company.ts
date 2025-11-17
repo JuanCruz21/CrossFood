@@ -20,6 +20,7 @@ export interface Empresa {
   fecha_fundacion?: string;
   sitio_web?: string;
   logo?: string;
+  [key: string]: unknown;
 }
 
 export interface EmpresaCreate {
@@ -66,6 +67,7 @@ export interface Restaurante {
   telefono?: string;
   email?: string;
   empresa_id: string;
+  [key: string]: unknown;
 }
 
 export interface RestauranteCreate {
@@ -98,6 +100,7 @@ export interface MesaRestaurante {
   numero_mesa: number;
   capacidad: number;
   restaurante_id: string;
+  [key: string]: unknown;
 }
 
 export interface MesaRestauranteCreate {

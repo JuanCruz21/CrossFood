@@ -10,7 +10,7 @@ import { useState } from 'react';
 export default function LoginTestPage() {
   const [email, setEmail] = useState('juancruz.02.2001@gmail.com');
   const [password, setPassword] = useState('admin123');
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
 
   const testLogin = async () => {

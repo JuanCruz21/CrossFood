@@ -22,4 +22,4 @@ COPY . .
 
 EXPOSE 8008
 ENV PORT=8008 PYTHONPATH=/app
-CMD ["/app/.venv/bin/uvicorn","app.main:app","--host","0.0.0.0","--port","8008"]
+CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8008", "--reload"]

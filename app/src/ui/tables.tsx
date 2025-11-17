@@ -47,15 +47,17 @@ export interface DataTableProps<T> {
 // Helper Functions
 // ============================================
 
-function getNestedValue(obj: any, path: string): any {
-  return path.split('.').reduce((acc, part) => acc?.[part], obj);
+function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+  return path.split('.').reduce((acc: unknown, part: string) => {
+    return (acc as Record<string, unknown>)?.[part];
+  }, obj);
 }
 
 // ============================================
 // Component
 // ============================================
 
-export function DataTable<T extends Record<string, any>>({
+export function DataTable<T extends Record<string, unknown>>({
   data,
   columns,
   actions,
@@ -103,7 +105,12 @@ export function DataTable<T extends Record<string, any>>({
 
       if (aValue === bValue) return 0;
 
-      const comparison = aValue < bValue ? -1 : 1;
+      // Handle null/undefined values
+      if (aValue == null) return 1;
+      if (bValue == null) return -1;
+
+      // Type-safe comparison
+      const comparison = String(aValue) < String(bValue) ? -1 : 1;
       return sortOrder === 'asc' ? comparison : -comparison;
     });
   }, [filteredData, sortKey, sortOrder]);

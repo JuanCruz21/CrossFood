@@ -1,9 +1,8 @@
 
-class InputProps {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     placeholder?: string;
     value?: string;
-    [key: string]: any;
 }
 
 export function Input({ label, placeholder, value, ...props }: InputProps) {
@@ -15,7 +14,13 @@ export function Input({ label, placeholder, value, ...props }: InputProps) {
     )
 }
 
-export function TextArea({ label, placeholder, value, ...props }: InputProps) {
+interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+    label?: string;
+    placeholder?: string;
+    value?: string;
+}
+
+export function TextArea({ label, placeholder, value, ...props }: TextAreaProps) {
     return (
     <div className="mb-4">
         {label && <label className="block text-sm font-medium mb-1">{label}</label>}

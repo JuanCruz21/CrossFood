@@ -6,7 +6,7 @@ import Link from 'next/link';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button } from 'app/ui/buttons';
 import { ThemeToggle, useTheme } from '../../hooks/useTheme';
-import { api, apiRequest, setAuthToken } from 'app/lib/api'
+import { apiRequest, setAuthToken } from 'app/lib/api'
 import { ToastContainer, toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
@@ -58,10 +58,11 @@ export default function LoginPage() {
         toast.success('Inicio de sesión exitoso');
         
       })
-      .catch((error: any) => {
+      .catch((error: unknown) => {
         console.error('Login error:', error);
         // Mostrar detalle si la API lo devuelve (por ejemplo: validation errors)
-        const detail = error?.data?.detail || error?.data?.message || error?.message || 'Error al iniciar sesión';
+        const err = error as { data?: { detail?: string; message?: string }; message?: string };
+        const detail = err?.data?.detail || err?.data?.message || err?.message || 'Error al iniciar sesión';
         toast.error(String(detail));
         // Manejo de errores adicional si es necesario
       })
