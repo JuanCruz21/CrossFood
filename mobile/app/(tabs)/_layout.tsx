@@ -13,7 +13,7 @@ export default function TabsLayout() {
       />
       <Tabs.Screen
         name="profile"
-        options={{ title: "Perfil" }}
+        options={{ title: "Perfil", headerShown: false }}
       />
     </Tabs>
   );

@@ -16,11 +16,16 @@ export default function RegisterScreen() {
 
   <Text className="mb-8 text-3xl text-black font-opensans-bold">Crear cuenta</Text>
 
-  <InputField 
-    label="Nombre completo"
-    placeholder="Ingresa tu nombre completo"
-    labelColor="black"
-  />
+  <InputField
+  label="Nombre completo"
+  placeholder="Ingresa tu nombre"
+  labelColor="#222"
+  bgColor="#F7F7F7"
+  textColor="#000"
+  borderColor="#e5e5e5"
+  placeholderColor="#888"
+  iconColor="#666"
+/>
 
   <InputField 
     label="Correo"

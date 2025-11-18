@@ -43,7 +43,7 @@ export default function IntroScreen() {
       <Animated.View style={[animatedStyles, { alignItems: "center" }]}>
         {/* LOGO */}
         <Image
-          source={require("./../assets/images/1.png")}
+          source={require("./../assets/images/4.png")}
           style={{ width: 140, height: 140, marginBottom: 25 }}
           resizeMode="contain"
         />

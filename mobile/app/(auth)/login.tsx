@@ -37,15 +37,27 @@ export default function LoginScreen() {
       </Text>
 
       {/* Inputs */}
-      <InputField 
-        label="Correo / Usuario" 
-        placeholder="Ingresa tu correo o usuario" 
+      <InputField
+        label="Correo / Usuario"
+        placeholder="Ingresa tu correo"
+        labelColor="white"
+        bgColor="rgba(255,255,255,0.08)"
+        textColor="white"
+        placeholderColor="#c4c4c4"
+        borderColor="transparent"
+        iconColor="#fff"
       />
 
-      <InputField 
+      <InputField
         label="Contraseña"
         placeholder="Ingresa tu contraseña"
         secure
+        labelColor="white"
+        bgColor="rgba(255,255,255,0.08)"
+        textColor="white"
+        placeholderColor="#c4c4c4"
+        borderColor="transparent"
+        iconColor="#fff"
       />
 
       {/* Botón Login */}
