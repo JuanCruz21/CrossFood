@@ -57,27 +57,27 @@ export default function Home() {
         <CategoryCard
           title="Hamburguesas"
           icon="https://cdn-icons-png.flaticon.com/512/3082/3082031.png"
-          onPress={() => router.push("/categoria")}
+          onPress={() => router.push("/category/item")}
         />
         <CategoryCard
           title="Pizzas"
           icon="https://cdn-icons-png.flaticon.com/512/6978/6978255.png"
-          onPress={() => router.push("/categoria")}
+          onPress={() => router.push("/category/item")}
         />
         <CategoryCard
           title="Pollo"
           icon="https://cdn-icons-png.flaticon.com/512/1046/1046751.png"
-          onPress={() => router.push("/categoria")}
+          onPress={() => router.push("/category/item")}
         />
         <CategoryCard
           title="Bebidas"
           icon="https://cdn-icons-png.flaticon.com/512/2738/2738730.png"
-          onPress={() => router.push("/categoria")}
+          onPress={() => router.push("/category/item")}
         />
         <CategoryCard
           title="Postres"
           icon="https://cdn-icons-png.flaticon.com/512/2887/2887975.png"
-          onPress={() => router.push("/categoria")}
+          onPress={() => router.push("/category/item")}
         />
       </ScrollView>
 
@@ -89,21 +89,21 @@ export default function Home() {
           title="Hamburguesa Doble"
           price={25.900}
           image="https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg"
-          onPress={() => router.push("/product")}
+          onPress={() => router.push("/products/details")}
         />
 
         <ProductCard
           title="Pizza Pepperoni"
           price={32.500}
           image="https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg"
-          onPress={() => router.push("/product")}
+          onPress={() => router.push("/products/details")}
         />
 
         <ProductCard
           title="Café Helado"
           price={12.500}
           image="https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg"
-          onPress={() => router.push("/product")}
+          onPress={() => router.push("/products/details")}
         />
       </ScrollView>
 
@@ -116,21 +116,21 @@ export default function Home() {
           title="Restaurante 1"
           price={25.900}
           image="https://images.pexels.com/photos/1322184/pexels-photo-1322184.jpeg"
-          onPress={() => router.push("/product")}
+          onPress={() => router.push("/products/details")}
         />
 
         <ProductCard
           title="Pizza Restaurante"
           price={32.500}
           image="https://images.pexels.com/photos/1322184/pexels-photo-1322184.jpeg"
-          onPress={() => router.push("/product")}
+          onPress={() => router.push("/products/details")}
         />
 
         <ProductCard
           title="Bar Restaurante"
           price={12.500}
           image="https://images.pexels.com/photos/1322184/pexels-photo-1322184.jpeg"
-          onPress={() => router.push("/product")}
+          onPress={() => router.push("/products/details")}
         />
       </ScrollView>
       <View className="h-12" />

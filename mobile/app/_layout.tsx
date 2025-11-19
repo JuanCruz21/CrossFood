@@ -2,6 +2,7 @@ import "@/global.css";
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function RootLayout() {
 
@@ -19,6 +20,7 @@ export default function RootLayout() {
   }
 
   return (
+    <SafeAreaProvider>
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="splash/index" />
       <Stack.Screen name="index" />
@@ -26,5 +28,6 @@ export default function RootLayout() {
       <Stack.Screen name="(auth)/register" />
       <Stack.Screen name="(tabs)" />
     </Stack>
+    </SafeAreaProvider>
   );
 }
