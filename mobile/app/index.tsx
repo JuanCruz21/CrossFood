@@ -1,52 +1,75 @@
-import React from "react";
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import React, { useEffect } from "react";
+import { View, Text, Image, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withTiming 
+} from "react-native-reanimated";
+// import AsyncStorage from "@react-native-async-storage/async-storage";  // ← para después
 
-export default function HomeScreen() {
+export default function IntroScreen() {
+  const router = useRouter();
+
+  // --- Animaciones ---
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(10);
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  useEffect(() => {
+    //Animación de fade-in al entrar
+    opacity.value = withTiming(1, { duration: 700 });
+    translateY.value = withTiming(0, { duration: 700 });
+
+    // --- AUTENTICACIÓN (para después) ---
+    /*
+    const checkAuth = async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (token) {
+        router.replace("/tabs");
+      }
+    };
+    checkAuth();
+    */
+  }, []);
+
   return (
-    <View className="flex-1 px-4 pt-10 bg-white">
-      {/* Header */}
-      <View className="flex-row items-center justify-between mb-6">
-        <Text className="text-2xl font-bold text-gray-800">Bienvenido 🍽️</Text>
+    <View className="items-center justify-center flex-1 px-10 bg-naranja-apagado">
+
+      <Animated.View style={[animatedStyles, { alignItems: "center" }]}>
+        {/* LOGO */}
         <Image
-          source={require("./../assets/images/splash-icon.png")}
-          className="w-10 h-10"
+          source={require("./../assets/images/4.png")}
+          style={{ width: 140, height: 140, marginBottom: 25 }}
           resizeMode="contain"
         />
-      </View>
 
-      {/* Categorías */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {["Restaurantes", "Reservas", "Domicilios", "Promos"].map((cat, i) => (
-          <TouchableOpacity
-            key={i}
-            className="mr-3 bg-[#FF6B00] px-5 py-2 rounded-full"
-          >
-            <Text className="font-medium text-white">{cat}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+        {/* Título */}
+        <Text className="text-3xl text-center text-white font-opensans-bold">
+          CrossFood
+        </Text>
 
-      {/* Recomendados */}
-      <Text className="mt-8 mb-4 text-lg font-semibold">Recomendados</Text>
-      <ScrollView>
-        {[1, 2, 3].map((item) => (
-          <View
-            key={item}
-            className="flex-row items-center p-4 mb-4 bg-gray-100 rounded-2xl"
-          >
-            <Image
-              source={require("./../assets/images/splash-icon.png")}
-              className="w-16 h-16 mr-4 rounded-lg"
-            />
-            <View>
-              <Text className="font-semibold text-gray-800">
-                Restaurante #{item}
-              </Text>
-              <Text className="text-sm text-gray-500">Comida rápida</Text>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+        <Text className="mt-2 text-lg text-center text-white font-opensans-regular opacity-90">
+          Conecta tu restaurante
+        </Text>
+      </Animated.View>
+
+      {/* Botón continuar */}
+      <Animated.View style={[animatedStyles, { marginTop: 60, width: "100%" }]}>
+        <TouchableOpacity
+          onPress={() => router.push("/(auth)/login")}
+          className="py-4 bg-black/80 rounded-xl"
+        >
+          <Text className="text-lg tracking-wide text-center text-white font-opensans-bold">
+            Iniciar Sesión
+          </Text>
+        </TouchableOpacity>
+      </Animated.View>
+
     </View>
   );
 }
