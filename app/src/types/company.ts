@@ -100,6 +100,10 @@ export interface MesaRestaurante {
   numero_mesa: number;
   capacidad: number;
   restaurante_id: string;
+  estado?: 'disponible' | 'ocupada' | 'reservada';
+  orden_activa_id?: string;
+  numero_comensales?: number;
+  tiempo_ocupacion?: string; // ISO datetime when occupied
   [key: string]: unknown;
 }
 
@@ -113,6 +117,9 @@ export interface MesaRestauranteUpdate {
   numero_mesa?: number;
   capacidad?: number;
   restaurante_id?: string;
+  estado?: 'disponible' | 'ocupada' | 'reservada';
+  orden_activa_id?: string | null;
+  numero_comensales?: number | null;
 }
 
 export interface MesaRestaurantesPublic {

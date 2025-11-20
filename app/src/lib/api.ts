@@ -354,6 +354,7 @@ import type {
   OrdenItemUpdate,
   OrdenItemsPublic,
   OrdenItemCantidadUpdate,
+  OrdenItemDetallado,
   EstadoOrden,
 } from '../types/product';
 import type {
@@ -361,6 +362,7 @@ import type {
   RestaurantesPublic,
   Empresa,
   EmpresasPublic,
+  MesaRestaurante,
 } from '../types/company';
 
 // ============================================
@@ -493,6 +495,43 @@ export async function getRestaurante(id: string): Promise<ApiResponse<Restaurant
 }
 
 // ============================================
+// Mesa Restaurante API Functions
+// ============================================
+
+/**
+ * Asignar una orden a una mesa
+ */
+export async function asignarOrdenAMesa(
+  mesaId: string,
+  ordenId: string,
+  numeroComensales: number
+): Promise<ApiResponse<MesaRestaurante>> {
+  const params = buildQueryString({
+    orden_id: ordenId,
+    numero_comensales: numeroComensales,
+  });
+  return api.patch<MesaRestaurante>(`/mesas/${mesaId}/asignar-orden${params}`);
+}
+
+/**
+ * Liberar una mesa (remover orden y cambiar estado a disponible)
+ */
+export async function liberarMesa(mesaId: string): Promise<ApiResponse<MesaRestaurante>> {
+  return api.patch<MesaRestaurante>(`/mesas/${mesaId}/liberar`);
+}
+
+/**
+ * Cambiar el estado de una mesa
+ */
+export async function cambiarEstadoMesa(
+  mesaId: string,
+  nuevoEstado: 'disponible' | 'ocupada' | 'reservada'
+): Promise<ApiResponse<MesaRestaurante>> {
+  const params = buildQueryString({ nuevo_estado: nuevoEstado });
+  return api.patch<MesaRestaurante>(`/mesas/${mesaId}/estado${params}`);
+}
+
+// ============================================
 // Producto (Product) API Functions
 // ============================================
 
@@ -588,6 +627,27 @@ export async function getOrdenes(filters?: {
  */
 export async function getOrden(id: string): Promise<ApiResponse<Orden>> {
   return api.get<Orden>(`/ordenes/${id}`);
+}
+
+/**
+ * Get active orders for a restaurant (pendiente, en_proceso, completada)
+ */
+export async function getOrdenesActivas(restauranteId: string, filters?: {
+  skip?: number;
+  limit?: number;
+}): Promise<ApiResponse<{ data: Orden[]; count: number }>> {
+  const params = buildQueryString({
+    skip: filters?.skip ?? 0,
+    limit: filters?.limit ?? 100,
+  });
+  return api.get<{ data: Orden[]; count: number }>(`/ordenes/activas/restaurante/${restauranteId}${params}`);
+}
+
+/**
+ * Get all items for a specific order with detailed product information
+ */
+export async function getOrdenItemsDetallados(ordenId: string): Promise<ApiResponse<{ data: OrdenItemDetallado[]; count: number }>> {
+  return api.get<{ data: OrdenItemDetallado[]; count: number }>(`/ordenes/${ordenId}/items`);
 }
 
 /**

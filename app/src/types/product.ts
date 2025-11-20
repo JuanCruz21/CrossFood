@@ -113,38 +113,84 @@ export interface ProductoStockUpdate {
 }
 
 // ============================================
+// Modificadores de Productos
+// ============================================
+
+export interface ModificadorOpcion {
+  id: string;
+  nombre: string;
+  precio_adicional?: number;
+}
+
+export interface Modificador {
+  id: string;
+  nombre: string;
+  tipo: 'obligatorio' | 'opcional';
+  opciones: ModificadorOpcion[];
+  producto_id: string;
+}
+
+export interface ProductoConModificadores extends Producto {
+  modificadores?: Modificador[];
+}
+
+export interface ModificadorSeleccionado {
+  modificador_id: string;
+  opcion_id: string;
+  nombre_modificador: string;
+  nombre_opcion: string;
+  precio_adicional: number;
+}
+
+// ============================================
 // Orden (Order) Types
 // ============================================
 
 export type EstadoOrden = 'pendiente' | 'en_proceso' | 'completada' | 'cancelada';
+export type EstadoMesa = 'disponible' | 'ocupada' | 'reservada';
 
 export interface Orden {
   id: string;
-  fecha_orden: string; // ISO datetime string
+  fecha: string; // ISO datetime string
   estado: EstadoOrden;
   total: number;
-  notas?: string;
-  restaurante_id: string;
-  cliente_id?: string;
+  numero_comensales?: number;
   mesa_id?: string;
+  cliente_id: string;
+  restaurante_id: string;
+  items?: OrdenItemDetallado[];
+  total_items?: number;
+  mesa_numero?: number;
+}
+
+export interface OrdenItemDetallado {
+  id: string;
+  orden_id: string;
+  producto_id: string;
+  cantidad: number;
+  precio_unitario: number;
+  notas: string;
+  producto_nombre?: string;
+  producto_descripcion?: string;
 }
 
 export interface OrdenCreate {
+  fecha: string;
+  total: number;
   estado?: EstadoOrden;
-  total?: number;
-  notas?: string;
-  restaurante_id: string;
-  cliente_id?: string;
+  numero_comensales?: number;
   mesa_id?: string;
+  cliente_id: string;
+  restaurante_id: string;
 }
 
 export interface OrdenUpdate {
-  estado?: EstadoOrden;
-  total?: number;
-  notas?: string;
-  restaurante_id?: string;
-  cliente_id?: string;
+  fecha: string;
+  total: number;
+  estado?: string;
   mesa_id?: string;
+  cliente_id?: string;
+  restaurante_id?: string;
 }
 
 export interface OrdenesPublic {
@@ -168,6 +214,12 @@ export interface OrdenItem {
   notas?: string;
   orden_id: string;
   producto_id: string;
+  modificadores?: ModificadorSeleccionado[];
+}
+
+export interface OrdenItemConProducto extends OrdenItem {
+  producto?: Producto;
+  destino?: 'cocina' | 'bar';
 }
 
 export interface OrdenItemCreate {
@@ -195,4 +247,32 @@ export interface OrdenItemsPublic {
 
 export interface OrdenItemCantidadUpdate {
   cantidad: number;
+}
+
+// ============================================
+// Comanda (KOT - Kitchen Order Ticket) Types
+// ============================================
+
+export interface ComandaItem {
+  producto: string;
+  cantidad: number;
+  modificadores?: string[];
+  notas?: string;
+}
+
+export interface Comanda {
+  id: string;
+  orden_id: string;
+  mesa_numero: number;
+  fecha_hora: string;
+  destino: 'cocina' | 'bar';
+  items: ComandaItem[];
+  numero_comensales?: number;
+  mesero?: string;
+}
+
+export interface ComandaCreate {
+  orden_id: string;
+  destino: 'cocina' | 'bar';
+  items: ComandaItem[];
 }

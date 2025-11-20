@@ -13,6 +13,10 @@ from models.product.categoria import Categoria, CategoriaCreate, CategoriaPublic
 from models.product.orden import Orden, OrdenCreate, OrdenPublic, OrdenUpdate, OrdenesPublic
 from models.product.ordenitem import OrdenItem, OrdenItemCreate, OrdenItemPublic, OrdenItemUpdate, OrdenItemsPublic
 from models.product.producto import Producto, ProductoCreate, ProductoPublic, ProductoUpdate, ProductosPublic
+from models.bill.factura import Factura, FacturaCreate, FacturaPublic, FacturaUpdate, FacturasPublic
+from models.bill.articulofactura import ArticuloFactura, ArticuloFacturaCreate, ArticuloFacturaPublic, ArticuloFacturaUpdate, ArticulosFacturaPublic
+from models.bill.pagos import Pago, PagoCreate, PagoPublic, PagoUpdate, PagosPublic
+from models.bill.correccionfactura import CorreccionFactura, CorreccionFacturaCreate, CorreccionFacturaPublic, CorreccionFacturaUpdate, CorreccionesFacturaPublic
 
 __all__ = [
     # Users
@@ -93,4 +97,28 @@ __all__ = [
     "ProductoUpdate",
     "ProductoPublic",
     "ProductosPublic",
+    # Factura
+    "Factura",
+    "FacturaCreate",
+    "FacturaUpdate",
+    "FacturaPublic",
+    "FacturasPublic",
+    # ArticuloFactura
+    "ArticuloFactura",
+    "ArticuloFacturaCreate",
+    "ArticuloFacturaUpdate",
+    "ArticuloFacturaPublic",
+    "ArticulosFacturaPublic",
+    # Pago
+    "Pago",
+    "PagoCreate",
+    "PagoUpdate",
+    "PagoPublic",
+    "PagosPublic",
+    # CorreccionFactura
+    "CorreccionFactura",
+    "CorreccionFacturaCreate",
+    "CorreccionFacturaUpdate",
+    "CorreccionFacturaPublic",
+    "CorreccionesFacturaPublic",
 ]

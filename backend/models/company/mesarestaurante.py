@@ -4,6 +4,9 @@ from sqlmodel import Field, SQLModel
 class MesaRestauranteBase(SQLModel):
     numero_mesa: int = Field(index=True)
     capacidad: int
+    estado: str = Field(default="disponible")  # disponible, ocupada, reservada
+    numero_comensales: int | None = None
+    orden_activa_id: uuid.UUID | None = Field(default=None, foreign_key="orden.id")
     restaurante_id: uuid.UUID = Field(foreign_key="restaurante.id")
 
 class MesaRestauranteCreate(MesaRestauranteBase):
@@ -12,6 +15,9 @@ class MesaRestauranteCreate(MesaRestauranteBase):
 class MesaRestauranteUpdate(SQLModel):
     numero_mesa: int | None = None
     capacidad: int | None = None
+    estado: str | None = None
+    numero_comensales: int | None = None
+    orden_activa_id: uuid.UUID | None = None
     restaurante_id: uuid.UUID | None = None
 
 class MesaRestaurante(MesaRestauranteBase, table=True):

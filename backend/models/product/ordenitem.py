@@ -2,8 +2,8 @@ import uuid
 from sqlmodel import Field, SQLModel
 
 class OrdenItemBase(SQLModel):
-    orden_id: uuid.UUID = Field(foreign_key="orden.id", primary_key=True)
-    producto_id: uuid.UUID = Field(foreign_key="producto.id", primary_key=True)
+    orden_id: uuid.UUID = Field(foreign_key="orden.id")
+    producto_id: uuid.UUID = Field(foreign_key="producto.id")
     cantidad: int
     precio_unitario: float
     notas: str

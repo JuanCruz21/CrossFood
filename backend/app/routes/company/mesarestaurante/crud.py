@@ -55,6 +55,74 @@ def get_mesa_by_numero(*, session: Session, restaurante_id: uuid.UUID, numero_me
     return session.exec(statement).first()
 
 
+def asignar_orden_a_mesa(
+    *, 
+    session: Session, 
+    mesa_id: uuid.UUID, 
+    orden_id: uuid.UUID,
+    numero_comensales: int
+) -> MesaRestaurante | None:
+    """
+    Asignar una orden activa a una mesa y cambiar su estado a 'ocupada'.
+    """
+    mesa = session.get(MesaRestaurante, mesa_id)
+    if not mesa:
+        return None
+    
+    mesa.orden_activa_id = orden_id
+    mesa.estado = "ocupada"
+    mesa.numero_comensales = numero_comensales
+    
+    session.add(mesa)
+    session.commit()
+    session.refresh(mesa)
+    return mesa
+
+
+def liberar_mesa(*, session: Session, mesa_id: uuid.UUID) -> MesaRestaurante | None:
+    """
+    Liberar una mesa, eliminar la orden asociada y cambiar su estado a 'disponible'.
+    """
+    mesa = session.get(MesaRestaurante, mesa_id)
+    if not mesa:
+        return None
+    
+    mesa.orden_activa_id = None
+    mesa.estado = "disponible"
+    mesa.numero_comensales = None
+    
+    session.add(mesa)
+    session.commit()
+    session.refresh(mesa)
+    return mesa
+
+
+def cambiar_estado_mesa(
+    *, 
+    session: Session, 
+    mesa_id: uuid.UUID, 
+    nuevo_estado: str
+) -> MesaRestaurante | None:
+    """
+    Cambiar el estado de una mesa.
+    Estados válidos: disponible, ocupada, reservada
+    """
+    estados_validos = ["disponible", "ocupada", "reservada"]
+    if nuevo_estado not in estados_validos:
+        return None
+    
+    mesa = session.get(MesaRestaurante, mesa_id)
+    if not mesa:
+        return None
+    
+    mesa.estado = nuevo_estado
+    
+    session.add(mesa)
+    session.commit()
+    session.refresh(mesa)
+    return mesa
+
+
 def delete_mesa(*, session: Session, mesa_id: uuid.UUID) -> bool:
     """
     Eliminar una mesa de restaurante.

@@ -149,7 +149,15 @@ def read_mesas_by_restaurante(
     )
     count = session.exec(count_statement).one()
 
-    mesas_public = [MesaRestaurantePublic.model_validate(mesa) for mesa in mesas]
+    # Corregir estado NULL en registros existentes
+    mesas_public = []
+    for mesa in mesas:
+        if mesa.estado is None:
+            mesa.estado = "disponible"
+            session.add(mesa)
+        mesas_public.append(MesaRestaurantePublic.model_validate(mesa))
+    
+    session.commit()
     return MesaRestaurantesPublic(data=mesas_public, count=count)
 
 
@@ -216,6 +224,145 @@ def update_mesa(
     return mesa
 
 
+@router.patch(
+    "/{mesa_id}/asignar-orden",
+    response_model=MesaRestaurantePublic,
+)
+def asignar_orden_a_mesa(
+    *,
+    session: SessionDep,
+    mesa_id: uuid.UUID,
+    orden_id: uuid.UUID,
+    numero_comensales: int,
+    current_user: CurrentUser,
+) -> Any:
+    """
+    Asignar una orden activa a una mesa y cambiar su estado a 'ocupada'.
+    """
+    mesa = crud.get_mesa_by_id(session=session, mesa_id=mesa_id)
+    if not mesa:
+        raise HTTPException(
+            status_code=404,
+            detail="La mesa con este ID no existe en el sistema.",
+        )
+
+    # Verificar permisos
+    if not current_user.is_superuser:
+        if current_user.restaurante_id != mesa.restaurante_id:
+            raise HTTPException(
+                status_code=403,
+                detail="No tienes permisos para asignar órdenes a esta mesa.",
+            )
+
+    # Verificar que la mesa esté disponible
+    if mesa.estado == "ocupada" and mesa.orden_activa_id:
+        raise HTTPException(
+            status_code=400,
+            detail="La mesa ya tiene una orden activa asignada.",
+        )
+
+    mesa = crud.asignar_orden_a_mesa(
+        session=session,
+        mesa_id=mesa_id,
+        orden_id=orden_id,
+        numero_comensales=numero_comensales,
+    )
+    
+    if not mesa:
+        raise HTTPException(
+            status_code=500,
+            detail="Error al asignar la orden a la mesa.",
+        )
+
+    return mesa
+
+
+@router.patch(
+    "/{mesa_id}/liberar",
+    response_model=MesaRestaurantePublic,
+)
+def liberar_mesa(
+    mesa_id: uuid.UUID, session: SessionDep, current_user: CurrentUser
+) -> Any:
+    """
+    Liberar una mesa, eliminar la orden asociada y cambiar su estado a 'disponible'.
+    """
+    mesa = crud.get_mesa_by_id(session=session, mesa_id=mesa_id)
+    if not mesa:
+        raise HTTPException(
+            status_code=404,
+            detail="La mesa con este ID no existe en el sistema.",
+        )
+
+    # Verificar permisos
+    if not current_user.is_superuser:
+        if current_user.restaurante_id != mesa.restaurante_id:
+            raise HTTPException(
+                status_code=403,
+                detail="No tienes permisos para liberar esta mesa.",
+            )
+
+    mesa = crud.liberar_mesa(session=session, mesa_id=mesa_id)
+    
+    if not mesa:
+        raise HTTPException(
+            status_code=500,
+            detail="Error al liberar la mesa.",
+        )
+
+    return mesa
+
+
+@router.patch(
+    "/{mesa_id}/estado",
+    response_model=MesaRestaurantePublic,
+)
+def cambiar_estado_mesa(
+    *,
+    session: SessionDep,
+    mesa_id: uuid.UUID,
+    nuevo_estado: str,
+    current_user: CurrentUser,
+) -> Any:
+    """
+    Cambiar el estado de una mesa.
+    Estados válidos: disponible, ocupada, reservada
+    """
+    estados_validos = ["disponible", "ocupada", "reservada"]
+    if nuevo_estado not in estados_validos:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Estado inválido. Los estados válidos son: {', '.join(estados_validos)}",
+        )
+
+    mesa = crud.get_mesa_by_id(session=session, mesa_id=mesa_id)
+    if not mesa:
+        raise HTTPException(
+            status_code=404,
+            detail="La mesa con este ID no existe en el sistema.",
+        )
+
+    # Verificar permisos
+    if not current_user.is_superuser:
+        if current_user.restaurante_id != mesa.restaurante_id:
+            raise HTTPException(
+                status_code=403,
+                detail="No tienes permisos para cambiar el estado de esta mesa.",
+            )
+
+    mesa = crud.cambiar_estado_mesa(
+        session=session, mesa_id=mesa_id, nuevo_estado=nuevo_estado
+    )
+    
+    if not mesa:
+        raise HTTPException(
+            status_code=500,
+            detail="Error al cambiar el estado de la mesa.",
+        )
+
+    return mesa
+
+
 @router.delete(
     "/{mesa_id}",
     response_model=Message,
@@ -241,6 +388,13 @@ def delete_mesa(
                 status_code=403,
                 detail="No tienes permisos para eliminar esta mesa.",
             )
+
+    # Verificar que la mesa no tenga una orden activa
+    if mesa.orden_activa_id:
+        raise HTTPException(
+            status_code=400,
+            detail="No se puede eliminar una mesa con una orden activa. Libera la mesa primero.",
+        )
 
     crud.delete_mesa(session=session, mesa_id=mesa_id)
     return Message(message="Mesa eliminada exitosamente")
