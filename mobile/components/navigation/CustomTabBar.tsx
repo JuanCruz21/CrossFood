@@ -16,6 +16,8 @@ export default function CustomTabBar({ state, navigation }: any) {
     <View style={[styles.container, { paddingBottom: bottom + 6 }]}>
       <View style={styles.navBar}>
         {state.routes.map((route: any, index: number) => {
+          console.log("ROUTE:", route.name);
+
           const isFocused = state.index === index;
           const Icon = icons[route.name];
           if (!Icon) return null;

@@ -63,7 +63,7 @@ export default function Home() {
         <CategoryCard
           title="Hamburguesas"
           icon="https://cdn-icons-png.flaticon.com/512/3082/3082031.png"
-          onPress={() => router.push("/category/item")}
+          onPress={() => router.push("/category/item1")}
         />
         <CategoryCard
           title="Pizzas"
