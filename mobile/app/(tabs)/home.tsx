@@ -1,12 +1,18 @@
 import React from "react";
 import { ScrollView, View, Text, TextInput, Image } from "react-native";
 import { router } from "expo-router";
+//import { useAuth } from "@/store/auth";
+
 
 import SectionTitle from "@/components/Text/SectionTitle";
 import CategoryCard from "@/components/Cards/CategoryCard";
 import ProductCard from "@/components/Cards/ProductCard";
 
+//const userId = useAuth((s) => s.userId);
+
+
 export default function Home() {
+  //console.log("Mi UUID es:", userId); 
   return (
     <ScrollView className="flex-1 bg-[#F5F5F5] px-5 pt-12">
 

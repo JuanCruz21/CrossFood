@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Home, ShoppingBag, User } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -13,12 +13,8 @@ export default function CustomTabBar({ state, navigation }: any) {
   };
 
   return (
-    <View
-      className="absolute bottom-0 left-0 right-0 items-center"
-      style={{ paddingBottom: bottom + 6 }}
-    >
-      <View className="bg-black w-[85%] rounded-3xl py-3 flex-row justify-around shadow-lg">
-
+    <View style={[styles.container, { paddingBottom: bottom + 6 }]}>
+      <View style={styles.navBar}>
         {state.routes.map((route: any, index: number) => {
           const isFocused = state.index === index;
           const Icon = icons[route.name];
@@ -30,26 +26,51 @@ export default function CustomTabBar({ state, navigation }: any) {
             <TouchableOpacity
               key={route.key}
               onPress={onPress}
-              className="items-center justify-center flex-1"
+              style={styles.tab}
               activeOpacity={0.8}
             >
-              {/* Círculo fijo, fondo dinámico */}
               <View
-                className="items-center justify-center"
-                style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 9999,   // <--- CÍRCULO 100% FIJO
-                    backgroundColor: isFocused ? "#f97316" : "transparent",
-                }}
-                >
+                style={[
+                  styles.iconCircle,
+                  { backgroundColor: isFocused ? "#f97316" : "transparent" },
+                ]}
+              >
                 <Icon size={26} color={isFocused ? "white" : "#aaaaaa"} />
               </View>
             </TouchableOpacity>
           );
         })}
-
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  navBar: {
+    width: "85%",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    backgroundColor: "black",
+    paddingVertical: 12,
+    borderRadius: 25,
+  },
+  tab: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24, //para el circulo
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

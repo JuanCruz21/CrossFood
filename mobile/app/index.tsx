@@ -6,7 +6,7 @@ import Animated, {
   useAnimatedStyle, 
   withTiming 
 } from "react-native-reanimated";
-// import AsyncStorage from "@react-native-async-storage/async-storage";  // ← para después
+import AsyncStorage from "@react-native-async-storage/async-storage"; 
 
 export default function IntroScreen() {
   const router = useRouter();
@@ -21,20 +21,19 @@ export default function IntroScreen() {
   }));
 
   useEffect(() => {
-    //Animación de fade-in al entrar
+    // Animaciones
     opacity.value = withTiming(1, { duration: 700 });
     translateY.value = withTiming(0, { duration: 700 });
 
-    // --- AUTENTICACIÓN (para después) ---
-    /*
+    // --- VALIDAR SESIÓN ACTIVA ---
     const checkAuth = async () => {
       const token = await AsyncStorage.getItem("token");
       if (token) {
-        router.replace("/tabs");
+        router.replace("/(tabs)/home"); //si ya está logueado entra directo
       }
     };
+
     checkAuth();
-    */
   }, []);
 
   return (
