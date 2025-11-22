@@ -1,8 +1,11 @@
-import { ScrollView, View } from "react-native";
+import { ScrollView } from "react-native";
 import ProfileHeader from "@/components/Profile/ProfileHeader";
 import ProfileOption from "@/components/Profile/ProfileOption";
 import ProfileSection from "@/components/Profile/ProfileSection";
 import LogoutButton from "@/components/Profile/LogoutButton";
+import { useAuth } from "@/store/auth";
+import { useRouter } from "expo-router";
+
 
 import {
   MapPin,
@@ -14,6 +17,8 @@ import {
 } from "lucide-react-native";
 
 export default function ProfileScreen() {
+const router = useRouter();
+const logout = useAuth((s) => s.logout);
   return (
     <ScrollView className="flex-1 px-5 py-6 bg-gray-50">
       {/* Header */}
@@ -58,7 +63,12 @@ export default function ProfileScreen() {
       </ProfileSection>
 
       {/* Botón de cerrar sesión */}
-      <LogoutButton onPress={() => console.log("logout")} />
+      <LogoutButton
+        onPress={async () => {
+          await logout();
+          router.replace("/"); // o router.replace("/(auth)/login") 
+        }}
+      />
     </ScrollView>
   );
 }
