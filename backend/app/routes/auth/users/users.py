@@ -16,6 +16,7 @@ from models.auth.users import (
     UpdatePassword,
     User,
     UserCreate,
+    UserCreateBasic,
     UserPublic,
     UserRegister,
     UsersPublic,
@@ -223,6 +224,65 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
             status_code=500,
             detail=f"Error creating user, empresa and restaurante: {str(e)}"
         )
+
+
+@router.post("/signup-basic", response_model=UserPublic)
+def register_user_basic(session: SessionDep, user_in: UserCreateBasic) -> Any:
+    """
+    Create new user with basic data only (no empresa or restaurante).
+    
+    This endpoint creates a user without any organizational associations.
+    Useful for creating authenticated users who don't belong to a specific
+    company or restaurant yet.
+    
+    Required fields:
+    - email: Valid email address
+    - password: Minimum 8 characters
+    - confirm_password: Must match password
+    - full_name: User's full name
+    
+    Flow:
+    1. Validates passwords match
+    2. Validates user email is unique
+    3. Creates user with provided basic data
+    4. Sets empresa_id and restaurante_id as None
+    """
+    # 1. Validate user doesn't exist
+    user = crud.get_user_by_email(session=session, email=user_in.email)
+    if user:
+        raise HTTPException(
+            status_code=400,
+            detail="The user with this email already exists in the system",
+        )
+    
+    # 2. Create User without empresa/restaurante associations
+    user_create = UserCreate(
+        email=user_in.email,
+        password=user_in.password,
+        full_name=user_in.full_name,
+        empresa_id=None,
+        restaurante_id=None,
+        is_active=True,
+        is_superuser=False
+    )
+    
+    user = crud.create_user(session=session, user_create=user_create)
+    
+    # Send welcome email if enabled
+    if settings.emails_enabled and user_in.email:
+        email_data = generate_new_account_email(
+            email_to=user_in.email, 
+            username=user_in.email, 
+            password=user_in.password
+        )
+        send_email(
+            email_to=user_in.email,
+            subject=email_data.subject,
+            html_content=email_data.html_content,
+        )
+    
+    return user
+
 
 
 @router.get("/{user_id}", response_model=UserPublic)

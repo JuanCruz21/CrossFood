@@ -8,8 +8,8 @@ class UserBase(SQLModel):
     is_active: bool = True
     is_superuser: bool = False
     full_name: str = Field(default=None, max_length=255)
-    restaurante_id: uuid.UUID = Field(default=None, foreign_key="restaurante.id")
-    empresa_id: uuid.UUID = Field(default=None, foreign_key="empresa.id")
+    restaurante_id: uuid.UUID | None = Field(default=None, foreign_key="restaurante.id")
+    empresa_id: uuid.UUID | None = Field(default=None, foreign_key="empresa.id")
 
 
 # Properties to receive via API on creation
@@ -31,6 +31,22 @@ class UserRegister(SQLModel):
     nombre_restaurante: str = Field(max_length=255)
     direccion_restaurante: str | None = Field(default=None, max_length=255)
     telefono_restaurante: str | None = Field(default=None, max_length=20)
+
+
+class UserCreateBasic(SQLModel):
+    """Schema for basic user creation without empresa or restaurante"""
+    email: EmailStr = Field(max_length=255)
+    password: str = Field(min_length=8, max_length=40)
+    confirm_password: str = Field(min_length=8, max_length=40)
+    full_name: str = Field(max_length=255)
+    
+    def model_post_init(self, __context):
+        """Validate that password and confirm_password match"""
+        if self.password != self.confirm_password:
+            raise ValueError("Passwords do not match")
+
+
+
 # Properties to receive via API on update, all are optional
 class UserUpdate(UserBase):
     email: EmailStr | None = Field(default=None, max_length=255)  # type: ignore
