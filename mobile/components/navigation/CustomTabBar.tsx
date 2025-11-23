@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Pressable} from "react-native";
 import { Home, ShoppingBag, User } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -25,21 +25,25 @@ export default function CustomTabBar({ state, navigation }: any) {
           const onPress = () => navigation.navigate(route.name);
 
           return (
-            <TouchableOpacity
-              key={route.key}
-              onPress={onPress}
-              style={styles.tab}
-              activeOpacity={0.8}
-            >
-              <View
-                style={[
-                  styles.iconCircle,
-                  { backgroundColor: isFocused ? "#f97316" : "transparent" },
-                ]}
-              >
-                <Icon size={26} color={isFocused ? "white" : "#aaaaaa"} />
-              </View>
-            </TouchableOpacity>
+<Pressable
+  key={route.key}
+  onPress={onPress}
+  style={[styles.tab]}
+>
+  <View style={styles.iconContainer}>
+    <View
+      style={[
+        styles.iconCircle,
+        { backgroundColor: isFocused ? "#f97316" : "transparent" },
+      ]}
+    >
+      <Icon size={24} color={isFocused ? "white" : "#aaaaaa"} />
+    </View>
+  </View>
+</Pressable>
+
+
+   
           );
         })}
       </View>
@@ -55,6 +59,7 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: "center",
   },
+
   navBar: {
     width: "85%",
     flexDirection: "row",
@@ -63,16 +68,28 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 25,
   },
+
   tab: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
+
+  iconContainer: {
+    width: 55,
+    height: 55,
+    alignItems: "center",
+    justifyContent: "center",
+    // 🔥 ESTO evita deformación
+    position: "relative",
+  },
+
   iconCircle: {
     width: 48,
     height: 48,
-    borderRadius: 24, //para el circulo
+    borderRadius: 48 / 2,
     alignItems: "center",
     justifyContent: "center",
+    overflow: "hidden", // 🔥 para asegurar circular
   },
 });

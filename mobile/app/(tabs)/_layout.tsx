@@ -4,7 +4,10 @@ import CustomTabBar from "@/components/navigation/CustomTabBar";
 export default function TabsLayout() {
   return (
     <Tabs
-      screenOptions={{ headerShown: false }}
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: { height: 0 },   //Desactiva estilo del tabBar nativo
+      }}
       tabBar={(props) => <CustomTabBar {...props} />}
     >
       <Tabs.Screen name="home" />
@@ -13,4 +16,3 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
-
